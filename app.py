@@ -1,11 +1,13 @@
 import os
 import json
+from pdf_chart import draw_north_indian_chart
 from interpretation_engine import generate_interpretation_report
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 from datetime import datetime
 from typing import Optional
+from chart_generator import generate_kundli_chart
 
 import httpx
 from fastapi import FastAPI, Form, HTTPException, Request
@@ -90,6 +92,7 @@ async def generate_kundli(payload: dict):
 
         engine = KundliEngine(birth_data)
         result = engine.calculate_all()
+        chart_path = generate_kundli_chart(result["d1_rashi_chart"])
         return JSONResponse(result)
 
     except Exception as exc:
@@ -120,6 +123,7 @@ async def generate_file(
 
     engine = KundliEngine(birth_data)
     result = engine.calculate_all()
+    chart_path = generate_kundli_chart(result["d1_rashi_chart"])
     interpretation_sections = generate_interpretation_report(result)
 
     safe_name = "".join(c for c in name if c.isalnum() or c in ["_", "-"]).strip() or "native"
@@ -128,6 +132,22 @@ async def generate_file(
 
     c = canvas.Canvas(path, pagesize=letter)
     width, height = letter
+    c.setFont("Helvetica-Bold", 16)
+    c.drawCentredString(width / 2, height - 40, "DharmaPath Janam Kundli Report")
+    chart_size = 340
+    chart_x = (width - chart_size) / 2
+    chart_y = height - 420
+
+    draw_north_indian_chart(
+        c,
+        result["d1_chart_visual"],
+        chart_x,
+        chart_y,
+        chart_size,
+        "D1 Rashi Chart"
+    )
+
+    y = chart_y - 50
 
     def title(text, y):
         c.setFillColor(colors.HexColor("#7c2d12"))
@@ -168,10 +188,10 @@ async def generate_file(
 
         return y
 
-    y = height - 50
+    #y = height - 50
 
-    title("DharmaPath Janam Kundli Report", y)
-    y -= 35
+    #title("DharmaPath Janam Kundli Report", y)
+    #y -= 35
 
     section("Birth Details", y)
     y -= 20
