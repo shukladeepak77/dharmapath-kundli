@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DharmaPath Kundli</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">DharmaPath Jyotish Engine</p>
+        <h1>Offline Kundli Generator</h1>
+        <p class="subtitle">Swiss Ephemeris calculations with a beautiful web interface. Location lookup uses free GeoNames.</p>
+      </div>
+      <div class="badge">No Astrology API</div>
+    </header>
+
+    <main class="layout">
+      <section class="card form-card">
+        <h2>Birth Details</h2>
+        <form id="kundliForm">
+          <label>Name
+            <input name="name" id="name" value="Sample Native" required />
+          </label>
+
+          <label>Gender / Sex
+            <select name="gender" id="gender">
+              <option value="">Select</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
+          </label>
+
+          <div class="grid-2">
+            <label>Date of Birth
+              <input type="date" name="birth_date" id="birth_date" value="1978-04-27" required />
+            </label>
+            <label>Time of Birth
+              <input type="time" name="birth_time" id="birth_time" value="02:00" required />
+            </label>
+          </div>
+
+          <label>Birth Location
+            <div class="search-row">
+              <input name="location" id="location" value="Basti Uttar Pradesh India" placeholder="Basti, UP, India" />
+              <button type="button" id="searchLocation">Search</button>
+            </div>
+          </label>
+
+          <div id="locationResults" class="location-results"></div>
+
+          <div class="grid-3">
+            <label>Latitude
+              <input name="latitude" id="latitude" value="26.8177" required />
+            </label>
+            <label>Longitude
+              <input name="longitude" id="longitude" value="82.7633" required />
+            </label>
+            <label>Timezone Offset
+              <input name="timezone" id="timezone" value="5.5" required />
+            </label>
+          </div>
+
+          <label>Selected Place
+            <input name="place" id="place" value="Basti, Uttar Pradesh, India" />
+          </label>
+
+          <div class="actions">
+            <button type="submit" class="primary">Generate Kundli</button>
+            <button type="button" id="downloadJson" class="secondary">Download JSON</button>
+          </div>
+        </form>
+        <p class="hint">Set GEONAMES_USERNAME on server for reliable location lookup. Demo username may be limited.</p>
+      </section>
+
+      <section class="results">
+        <div class="card summary-card" id="summary">
+          <h2>Kundli Result</h2>
+          <p>Enter details and click Generate Kundli.</p>
+        </div>
+
+        <div class="chart-tabs">
+          <button class="tab active" data-chart="d1">D1 Rashi</button>
+          <button class="tab" data-chart="d9">D9 Navamsa</button>
+        </div>
+
+        <div class="card chart-card">
+          <div id="northChart" class="north-chart"></div>
+        </div>
+
+        <div class="card">
+          <h2>Planetary Positions</h2>
+          <div id="positions"></div>
+        </div>
+
+        <div class="card">
+          <h2>Vimshottari Mahadasha</h2>
+          <div id="dashas"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
