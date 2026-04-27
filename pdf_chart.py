@@ -16,6 +16,19 @@ HOUSE_POSITIONS = {
     12: (0.72, 0.14),
 }
 
+PLANET_FULL_NAMES = {
+    "La": "Lagna",
+    "Su": "Sun / Surya",
+    "Mo": "Moon / Chandra",
+    "Ma": "Mars / Mangal",
+    "Me": "Mercury / Budh",
+    "Ju": "Jupiter / Guru",
+    "Ve": "Venus / Shukra",
+    "Sa": "Saturn / Shani",
+    "Ra": "Rahu",
+    "Ke": "Ketu",
+}
+
 
 def draw_north_indian_chart(c, chart_visual, x, y, size, title="D1 Rashi Chart"):
     """
@@ -73,7 +86,11 @@ def draw_north_indian_chart(c, chart_visual, x, y, size, title="D1 Rashi Chart")
             ty += offset
         elif py > 0.5:
             ty -= offset
-        planets = " ".join([p["short"] for p in house["planets"]])
+        #planets = " ".join([p["short"] for p in house["planets"]])
+        planet_lines = [
+            PLANET_FULL_NAMES.get(p["short"].replace("R", ""), p["short"])
+            for p in house["planets"]
+        ]
 
         # Rashi number
         c.setFillColor(colors.HexColor("#a16207"))
@@ -82,12 +99,17 @@ def draw_north_indian_chart(c, chart_visual, x, y, size, title="D1 Rashi Chart")
 
         # Planets
         c.setFillColor(colors.HexColor("#111827"))
-        c.setFont("Helvetica-Bold", 7.8)
-        c.drawCentredString(tx, ty - 3, planets)
+        c.setFont("Helvetica-Bold", 6.5)
+        #c.drawCentredString(tx, ty - 3, planets)
+        line_y = ty - 3
+        for planet_text in planet_lines:
+            c.drawCentredString(tx, line_y, planet_text)
+            line_y -= 8
+
 
         # House/rashi name
         c.setFillColor(colors.HexColor("#57534e"))
         c.setFont("Helvetica", 7.5)
-        c.drawCentredString(tx, ty - 16, f"H{house_num} {house['rashi']}")
+        c.drawCentredString(tx, ty - 22, f"H{house_num} {house['rashi']}")
 
     c.restoreState()

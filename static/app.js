@@ -7,6 +7,7 @@ const housePositions = {
   9: [87, 75], 10: [85, 50], 11: [87, 25], 12: [75, 12],
 };
 
+
 function $(id) { return document.getElementById(id); }
 
 function degreeText(value) {
