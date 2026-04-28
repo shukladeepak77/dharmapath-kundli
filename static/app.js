@@ -1,6 +1,19 @@
 let lastResult = null;
 let currentChart = "d1";
 
+const PLANET_FULL_NAMES = {
+  "La": "Lagna",         "Su": "Sun / Surya",      "Mo": "Moon / Chandra",
+  "Ma": "Mars / Mangal", "Me": "Mercury / Budh",    "Ju": "Jupiter / Guru",
+  "Ve": "Venus / Shukra","Sa": "Saturn / Shani",    "Ra": "Rahu",
+  "Ke": "Ketu",
+};
+
+const PLANET_COLORS = {
+  "La": "#7c2d12", "Su": "#dc2626", "Mo": "#2563eb", "Ma": "#b91c1c",
+  "Me": "#059669", "Ju": "#d97706", "Ve": "#7c3aed", "Sa": "#374151",
+  "Ra": "#0891b2", "Ke": "#78350f",
+};
+
 const housePositions = {
   1: [50, 13], 2: [25, 12], 3: [13, 25], 4: [15, 50],
   5: [13, 75], 6: [25, 88], 7: [50, 87], 8: [75, 88],
@@ -82,11 +95,23 @@ function renderChart(chartData) {
   for (let i = 1; i <= 12; i++) {
     const h = houses[String(i)];
     const [x, y] = housePositions[i];
-    const planets = h.planets.map(p => p.short).join(" ");
+
+    const planetsHtml = h.planets.map(p => {
+      const raw = p.short;
+      const isRetro = raw.endsWith("R") && (raw.slice(0, -1) in PLANET_FULL_NAMES);
+      const key = isRetro ? raw.slice(0, -1) : raw;
+      const fullName = (PLANET_FULL_NAMES[key] || raw) + (isRetro ? " ℞" : "");
+      const color = PLANET_COLORS[key] || "#111827";
+      return `<div class="planet-line" style="color:${color}">${fullName}</div>`;
+    }).join("");
+
+    const lagnaMarker = i === 1 ? '<div class="lagna-dot"></div>' : "";
+
     html += `
       <div class="house-label" style="left:${x}%; top:${y}%;">
+        ${lagnaMarker}
         <div class="rashi-num">${h.rashi_number}</div>
-        <div class="planets">${planets}</div>
+        <div class="planets">${planetsHtml}</div>
         <div class="house-name">H${i} ${h.rashi}</div>
       </div>
     `;

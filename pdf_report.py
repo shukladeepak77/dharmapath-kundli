@@ -96,7 +96,7 @@ def _header_footer(c, section: str, page_num: int):
         LM, FTR_H - 14,
         f"Dharma Path USA Foundation  |  dharmapath.org  |  "
         f"Generated: {datetime.now().strftime('%B %d, %Y')}  |  "
-        "Swiss Ephemeris · Lahiri Ayanamsha",
+        "For spiritual guidance & educational purposes only",
     )
     c.setFont("Helvetica", 7)
     c.drawRightString(PW - RM, FTR_H - 14, f"Page {page_num}")
@@ -292,7 +292,7 @@ def _cover_page(c, bd: dict, result: dict):
         ("Birth Place",      bd.get("place", "—")),
         ("Coordinates",      f"Lat {bd.get('latitude', '—')}°  ·  Lon {bd.get('longitude', '—')}°"),
         ("Timezone",         f"UTC {bd.get('timezone_offset_hours', 0):+}"),
-        ("Lahiri Ayanamsha", f"{result.get('ayanamsha_lahiri', '—')}°"),
+        ("Ayanamsha",         f"{result.get('ayanamsha_lahiri', '—')}°"),
     ]
 
     dy = by + bh - 52
@@ -321,15 +321,21 @@ def _cover_page(c, bd: dict, result: dict):
 
     c.setFillColor(C_MUTED)
     c.setFont("Helvetica-Oblique", 7.5)
-    c.drawCentredString(
-        PW / 2, shloka_y - 26,
-        "This report is for spiritual guidance and educational purposes. "
-        "Computed using standard Vedic astrology principles.",
-    )
-    c.drawCentredString(
-        PW / 2, shloka_y - 39,
-        "Free will and sincere personal effort remain paramount in shaping one’s destiny.",
-    )
+    disclaimer_lines = [
+        "This Janam Kundli report is intended solely for spiritual guidance, self-reflection, and educational purposes.",
+        "It does not constitute medical, psychological, legal, financial, or any other form of professional advice.",
+        "Astrological interpretations are rooted in classical Vedic Jyotish traditions and are presented as one lens",
+        "through which to understand life patterns — not as deterministic predictions or guaranteed outcomes.",
+        "Individual results may vary. Dharma Path USA Foundation makes no warranties, express or implied,",
+        "regarding the accuracy, completeness, or suitability of this report for any particular purpose.",
+        "The Foundation assumes no liability for any decisions, actions, or consequences arising from use of this report.",
+        "Free will, sincere personal effort, and the grace of the Divine remain the ultimate determinants of one’s destiny.",
+    ]
+    line_spacing = 13
+    dy = shloka_y - 26
+    for line in disclaimer_lines:
+        c.drawCentredString(PW / 2, dy, line)
+        dy -= line_spacing
 
     # ── Bottom brand band ─────────────────────────────────────────────────────
     c.setFillColor(C_MAROON_DARK)
@@ -566,7 +572,7 @@ def build_kundli_pdf(result: dict, interpretation_sections: list, path: str) -> 
     c.setTitle("Janam Kundli — Dharma Path USA Foundation")
     c.setAuthor("Dharma Path USA Foundation")
     c.setSubject("Vedic Astrology Birth Chart Report")
-    c.setCreator("DharmaPath Jyotish Engine · Swiss Ephemeris")
+    c.setCreator("DharmaPath Jyotish Engine")
 
     bd = result["birth_data"]
 

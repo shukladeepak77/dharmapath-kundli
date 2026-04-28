@@ -245,30 +245,43 @@ button {
 
 .house-label {
   position: absolute;
-  width: 108px;
+  width: 120px;
   min-height: 64px;
   transform: translate(-50%, -50%);
   text-align: center;
-  font-size: 13px;
   line-height: 1.22;
+}
+
+.lagna-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #fed7aa;
+  border: 1.5px solid #c2410c;
+  margin: 0 auto 2px;
 }
 
 .rashi-num {
   color: #a16207;
   font-weight: 850;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .planets {
-  color: #1f2937;
-  font-weight: 850;
-  font-size: 15px;
-  margin-top: 3px;
+  margin-top: 2px;
+}
+
+.planet-line {
+  font-size: 10.5px;
+  font-weight: 800;
+  line-height: 1.35;
+  white-space: nowrap;
 }
 
 .house-name {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 10px;
+  margin-top: 1px;
 }
 
 .table {
