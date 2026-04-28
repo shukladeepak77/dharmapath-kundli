@@ -1,13 +1,7 @@
 import os
-import json
-from pdf_chart import draw_north_indian_chart
 from interpretation_engine import generate_interpretation_report
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-from reportlab.lib import colors
-from datetime import datetime
-from typing import Optional
 from chart_generator import generate_kundli_chart
+from pdf_report import build_kundli_pdf
 
 import httpx
 from fastapi import FastAPI, Form, HTTPException, Request
@@ -123,184 +117,16 @@ async def generate_file(
 
     engine = KundliEngine(birth_data)
     result = engine.calculate_all()
-    chart_path = generate_kundli_chart(result["d1_rashi_chart"])
+    generate_kundli_chart(result["d1_rashi_chart"])
     interpretation_sections = generate_interpretation_report(result)
 
-    safe_name = "".join(c for c in name if c.isalnum() or c in ["_", "-"]).strip() or "native"
+    safe_name = (
+        "".join(c for c in name if c.isalnum() or c in "_-").strip() or "native"
+    )
     filename = f"kundli_{safe_name}.pdf"
     path = os.path.join("/tmp", filename)
 
-    c = canvas.Canvas(path, pagesize=letter)
-    width, height = letter
-    c.setFont("Helvetica-Bold", 16)
-    c.drawCentredString(width / 2, height - 40, "DharmaPath Janam Kundli Report")
-    chart_size = 340
-    chart_x = (width - chart_size) / 2
-    chart_y = height - 420
-
-    draw_north_indian_chart(
-        c,
-        result["d1_chart_visual"],
-        chart_x,
-        chart_y,
-        chart_size,
-        "D1 Rashi Chart"
-    )
-
-    y = chart_y - 50
-
-    def title(text, y):
-        c.setFillColor(colors.HexColor("#7c2d12"))
-        c.setFont("Helvetica-Bold", 18)
-        c.drawString(50, y, text)
-        c.setFillColor(colors.black)
-
-    def line(text, y, size=10):
-        c.setFont("Helvetica", size)
-        c.drawString(50, y, text)
-
-    def section(text, y):
-        c.setFillColor(colors.HexColor("#9a3412"))
-        c.setFont("Helvetica-Bold", 13)
-        c.drawString(50, y, text)
-        c.setFillColor(colors.black)
-
-    def paragraph(text, y, size=9, max_chars=95):
-        c.setFont("Helvetica", size)
-        words = text.split()
-        current = ""
-
-        for word in words:
-            if len(current + " " + word) <= max_chars:
-                current += " " + word if current else word
-            else:
-                c.drawString(50, y, current)
-                y -= 13
-                current = word
-
-                if y < 60:
-                    c.showPage()
-                    y = height - 50
-
-        if current:
-            c.drawString(50, y, current)
-            y -= 15
-
-        return y
-
-    #y = height - 50
-
-    #title("DharmaPath Janam Kundli Report", y)
-    #y -= 35
-
-    section("Birth Details", y)
-    y -= 20
-    line(f"Name: {name}", y); y -= 15
-    line(f"Gender: {gender}", y); y -= 15
-    line(f"Birth Date/Time: {birth_date} {birth_time}", y); y -= 15
-    line(f"Place: {place}", y); y -= 15
-    line(f"Latitude: {latitude}, Longitude: {longitude}", y); y -= 15
-    line(f"Timezone Offset: UTC{timezone_offset_hours:+}", y); y -= 15
-    line(f"Lahiri Ayanamsha: {result['ayanamsha_lahiri']}", y); y -= 30
-
-    section("D1 Rashi Chart - Planetary Positions", y)
-    y -= 20
-
-    d1 = result["d1_rashi_chart"]
-    order = ["Lagna", "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"]
-
-    c.setFont("Helvetica-Bold", 9)
-    c.drawString(50, y, "Planet")
-    c.drawString(120, y, "Rashi")
-    c.drawString(220, y, "Degree")
-    c.drawString(290, y, "House")
-    c.drawString(350, y, "Nakshatra")
-    c.drawString(470, y, "Pada")
-    y -= 14
-
-    c.setFont("Helvetica", 9)
-    for p in order:
-        x = d1[p]
-        c.drawString(50, y, p)
-        c.drawString(120, y, x["rashi"])
-        c.drawString(220, y, str(round(x["degree_in_rashi"], 2)))
-        c.drawString(290, y, str(x["house"]))
-        c.drawString(350, y, x["nakshatra"])
-        c.drawString(470, y, str(x["pada"]))
-        y -= 14
-
-    y -= 20
-    section("D9 Navamsa Chart - Planetary Positions", y)
-    y -= 20
-
-    d9 = result["d9_navamsa_chart"]
-
-    c.setFont("Helvetica-Bold", 9)
-    c.drawString(50, y, "Planet")
-    c.drawString(120, y, "Rashi")
-    c.drawString(220, y, "Degree")
-    c.drawString(290, y, "House")
-    c.drawString(350, y, "Nakshatra")
-    c.drawString(470, y, "Pada")
-    y -= 14
-
-    c.setFont("Helvetica", 9)
-    for p in order:
-        x = d9[p]
-        c.drawString(50, y, p)
-        c.drawString(120, y, x["rashi"])
-        c.drawString(220, y, str(round(x["degree_in_rashi"], 2)))
-        c.drawString(290, y, str(x["house"]))
-        c.drawString(350, y, x["nakshatra"])
-        c.drawString(470, y, str(x["pada"]))
-        y -= 14
-
-    c.showPage()
-    y = height - 50
-
-    title("Vimshottari Mahadasha", y)
-    y -= 35
-
-    c.setFont("Helvetica-Bold", 10)
-    c.drawString(50, y, "Lord")
-    c.drawString(150, y, "Start")
-    c.drawString(260, y, "End")
-    c.drawString(370, y, "Years")
-    y -= 18
-
-    c.setFont("Helvetica", 10)
-    for d in result["vimshottari_mahadasha"]:
-        c.drawString(50, y, d["lord"])
-        c.drawString(150, y, d["start"])
-        c.drawString(260, y, d["end"])
-        c.drawString(370, y, str(d["years"]))
-        y -= 18
-
-    y -= 30
-    c.setFont("Helvetica-Oblique", 9)
-    c.setFillColor(colors.gray)
-    c.drawString(50, y, "Generated by DharmaPath Kundli Engine using Swiss Ephemeris calculations.")
-
-    c.showPage()
-    y = height - 50
-
-    title("Detailed Kundli Interpretation", y)
-    y -= 35
-
-    for item in interpretation_sections:
-        if y < 100:
-            c.showPage()
-            y = height - 50
-
-        section(item["title"], y)
-        y -= 20
-
-        for para in item["paragraphs"]:
-            y = paragraph(para, y)
-
-        y -= 10
-    
-    c.save()
+    build_kundli_pdf(result, interpretation_sections, path)
 
     return FileResponse(path, media_type="application/pdf", filename=filename)
 
