@@ -43,25 +43,14 @@ async function searchLocation() {
     return;
   }
 
-  $("locationResults").innerHTML = data.results.map((loc, idx) => `
-    <div class="loc-item" data-idx="${idx}">
-      <strong>${loc.display}</strong><br>
-      Lat ${loc.lat}, Lng ${loc.lng}, TZ ${loc.gmtOffset ?? "manual"}
-    </div>
-  `).join("");
-
-  document.querySelectorAll(".loc-item").forEach(el => {
-    el.addEventListener("click", () => {
-      const loc = data.results[Number(el.dataset.idx)];
-      $("latitude").value = loc.lat;
-      $("longitude").value = loc.lng;
-      if (loc.gmtOffset !== null && loc.gmtOffset !== undefined) {
-        $("timezone").value = loc.gmtOffset;
-      }
-      $("place").value = loc.display;
-      $("locationResults").innerHTML = `<div class="loc-item">Selected: ${loc.display}</div>`;
-    });
-  });
+  const loc = data.results[0];
+  $("latitude").value = loc.lat;
+  $("longitude").value = loc.lng;
+  if (loc.gmtOffset !== null && loc.gmtOffset !== undefined) {
+    $("timezone").value = loc.gmtOffset;
+  }
+  $("place").value = loc.display;
+  $("locationResults").innerHTML = `<div class="loc-item"><strong>✓ ${loc.display}</strong> &nbsp;·&nbsp; Lat ${loc.lat}, Lng ${loc.lng}, TZ ${loc.gmtOffset ?? "—"}</div>`;
 }
 
 function renderSummary(result) {

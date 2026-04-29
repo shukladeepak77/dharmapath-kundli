@@ -48,6 +48,14 @@ body {
   opacity: .86;
 }
 
+.brand-name {
+  font-weight: 800;
+  color: #fbbf24;
+  opacity: 1;
+  font-size: 15px;
+  letter-spacing: .14em;
+}
+
 h1, h2 { margin: 0; }
 
 h1 { font-size: clamp(30px, 5vw, 54px); line-height: 1; }
@@ -75,6 +83,43 @@ h1 { font-size: clamp(30px, 5vw, 54px); line-height: 1; }
   border-radius: 999px;
   background: rgba(255,255,255,.14);
   white-space: nowrap;
+}
+
+.hero-oneliner {
+  flex: 1;
+  text-align: center;
+  color: white;
+  padding: 0 16px;
+}
+
+.hero-oneliner p {
+  margin: 0 0 10px;
+  font-size: 15.5px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  line-height: 1.7;
+  color: #fbbf24;
+  text-shadow: 0 1px 8px rgba(0,0,0,.25);
+}
+
+.hero-oneliner-sub {
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  opacity: .75 !important;
+  letter-spacing: .14em !important;
+  text-transform: uppercase;
+  color: #fed7aa !important;
+  text-shadow: none !important;
+}
+
+.hero-logo {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,.35);
+  box-shadow: 0 4px 24px rgba(0,0,0,.25);
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .layout {
@@ -187,6 +232,46 @@ button {
   background: #ffedd5;
 }
 
+.welcome-state {
+  text-align: center;
+  padding: 18px 10px;
+}
+
+.welcome-om {
+  font-size: 32px;
+  color: var(--brand-2);
+  margin-bottom: 10px;
+}
+
+.welcome-title {
+  font-size: 22px;
+  color: var(--brand);
+  margin: 0 0 12px;
+}
+
+.welcome-divider {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--brand-2), transparent);
+  margin: 0 auto 14px;
+}
+
+.welcome-text {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.7;
+  max-width: 420px;
+  margin: 0 auto 10px;
+}
+
+.welcome-sub {
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
 .results {
   display: grid;
   gap: 18px;
@@ -204,6 +289,10 @@ button {
   border: 1px solid var(--line);
   border-radius: 16px;
   padding: 12px;
+}
+
+.summary-card:empty {
+  display: none;
 }
 
 .summary-item span {
