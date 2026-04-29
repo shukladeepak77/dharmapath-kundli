@@ -75,8 +75,6 @@ async def generate_kundli(payload: dict):
         birth_dt = f"{birth_date} {birth_time}:00"
 
         birth_data = BirthData(
-            name=payload.get("name", "Native"),
-            gender=payload.get("gender", ""),
             birth_datetime_local=birth_dt,
             timezone_offset_hours=float(payload["timezone_offset_hours"]),
             latitude=float(payload["latitude"]),
@@ -96,8 +94,6 @@ async def generate_kundli(payload: dict):
 
 @app.post("/generate-file")
 async def generate_file(
-    name: str = Form(...),
-    gender: str = Form(""),
     birth_date: str = Form(...),
     birth_time: str = Form(...),
     place: str = Form(...),
@@ -106,8 +102,6 @@ async def generate_file(
     timezone_offset_hours: float = Form(...),
 ):
     birth_data = BirthData(
-        name=name,
-        gender=gender,
         birth_datetime_local=f"{birth_date} {birth_time}:00",
         timezone_offset_hours=timezone_offset_hours,
         latitude=latitude,
@@ -120,10 +114,7 @@ async def generate_file(
     generate_kundli_chart(result["d1_rashi_chart"])
     interpretation_sections = generate_interpretation_report(result)
 
-    safe_name = (
-        "".join(c for c in name if c.isalnum() or c in "_-").strip() or "native"
-    )
-    filename = f"kundli_{safe_name}.pdf"
+    filename = f"kundli_{birth_date}.pdf"
     path = os.path.join("/tmp", filename)
 
     build_kundli_pdf(result, interpretation_sections, path)

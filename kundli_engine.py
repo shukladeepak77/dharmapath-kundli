@@ -53,8 +53,6 @@ NAKSHATRA_LORDS = [
 
 @dataclass(frozen=True)
 class BirthData:
-    name: str
-    gender: str
     birth_datetime_local: str
     timezone_offset_hours: float
     latitude: float

@@ -274,11 +274,10 @@ def _cover_page(c, bd: dict, result: dict):
     c.setLineWidth(1.5)
     c.roundRect(bx, by, bw, bh, 10, fill=0, stroke=1)
 
-    # Native name in stripe
-    name = bd.get("name", "Native")
+    # Header label in stripe
     c.setFillColor(C_WHITE)
     c.setFont("Helvetica-Bold", 13)
-    c.drawCentredString(bx + bw / 2, by + bh - 21, name)
+    c.drawCentredString(bx + bw / 2, by + bh - 21, "Birth Details")
 
     # Detail rows
     birth_dt   = bd.get("birth_datetime_local", "")
@@ -286,7 +285,6 @@ def _cover_page(c, bd: dict, result: dict):
     birth_time = birth_dt.split(" ")[1][:5] if " " in birth_dt else "—"
 
     details = [
-        ("Gender",           bd.get("gender") or "—"),
         ("Date of Birth",    birth_date),
         ("Time of Birth",    birth_time),
         ("Birth Place",      bd.get("place", "—")),

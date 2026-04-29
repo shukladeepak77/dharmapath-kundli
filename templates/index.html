@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DharmaPath Kundli</title>
-  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/style.css?v=3" />
 </head>
 <body>
   <div class="page">
@@ -15,26 +15,12 @@
         <p class="hero-tag">Vedic Horoscope &nbsp;·&nbsp; Jyotish</p>
         <p class="subtitle">A refined Vedic horoscope experience that reveals the deeper blueprint of your life — offering insights into personality, career, relationships, and spiritual growth.</p>
       </div>
-      <div class="badge">No Astrology API</div>
     </header>
 
     <main class="layout">
       <section class="card form-card">
         <h2>Birth Details</h2>
         <form id="kundliForm">
-          <label>Name
-            <input name="name" id="name" value="Sample Native" required />
-          </label>
-
-          <label>Gender / Sex
-            <select name="gender" id="gender">
-              <option value="">Select</option>
-              <option>Male</option>
-              <option>Female</option>
-              <option>Other</option>
-            </select>
-          </label>
-
           <div class="grid-2">
             <label>Date of Birth
               <input type="date" name="birth_date" id="birth_date" value="1978-04-27" required />
@@ -74,7 +60,7 @@
 	    <button type="button" id="downloadJson" class="secondary">Download Kundli</button>
           </div>
         </form>
-        <p class="hint">Set GEONAMES_USERNAME on server for reliable location lookup. Demo username may be limited.</p>
+
       </section>
 
       <section class="results">
@@ -105,6 +91,6 @@
     </main>
   </div>
 
-  <script src="/static/app.js"></script>
+  <script src="/static/app.js?v=3"></script>
 </body>
 </html>

@@ -67,11 +67,10 @@ async function searchLocation() {
 function renderSummary(result) {
   const bd = result.birth_data;
   $("summary").innerHTML = `
-    <h2>${bd.name || "Native"}</h2>
+    <h2>Kundli Report</h2>
     <div class="summary-grid">
       <div class="summary-item"><span>Birth</span>${bd.birth_datetime_local}</div>
       <div class="summary-item"><span>Place</span>${bd.place}</div>
-      <div class="summary-item"><span>Gender</span>${bd.gender || "-"}</div>
       <div class="summary-item"><span>UTC</span>${result.utc_datetime}</div>
       <div class="summary-item"><span>Ayanamsha</span>${result.ayanamsha_lahiri}</div>
       <div class="summary-item"><span>Julian Day</span>${result.julian_day_ut}</div>
@@ -172,8 +171,6 @@ async function generateKundli(event) {
   event.preventDefault();
 
   const payload = {
-    name: $("name").value,
-    gender: $("gender").value,
     birth_date: $("birth_date").value,
     birth_time: $("birth_time").value,
     place: $("place").value,
@@ -206,8 +203,6 @@ function downloadJson() {
   form.action = "/generate-file";
 
   const fields = {
-    name: $("name").value,
-    gender: $("gender").value,
     birth_date: $("birth_date").value,
     birth_time: $("birth_time").value,
     place: $("place").value,
