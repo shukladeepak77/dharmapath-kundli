@@ -4,21 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jyotish Kundli · Dharma Path USA Foundation</title>
-  <link rel="stylesheet" href="/static/style.css?v=11" />
+  <link rel="stylesheet" href="/static/style.css?v=12" />
 </head>
 <body>
   <div class="page">
     <header class="hero">
       <div>
-        <p class="eyebrow"><span class="brand-name">Dharma Path USA Foundation</span> &nbsp;·&nbsp; Vedic Jyotish</p>
+        <p class="eyebrow"><span class="brand-name">Dharma Path USA Foundation</span></p>
         <h1>Jyotish Kundli</h1>
-        <p class="hero-tag">Know Your Stars &nbsp;·&nbsp; Live Your Dharma</p>
+        <p class="hero-tag">Know Your Stars</p>
+        <p class="hero-tag">Live Your Dharma</p>
       </div>
       <div class="hero-oneliner">
         <p>Vedic Birth Chart &nbsp;·&nbsp; Nakshatras &nbsp;·&nbsp; Planetary Dashas &nbsp;·&nbsp; Jyotish Insights</p>
         <p class="hero-oneliner-sub">For spiritual exploration &amp; self-reflection</p>
       </div>
-      <img src="/static/AstroJyotishalogo.png?v=1" alt="AstroJyotisha Logo" class="hero-logo" />
+      <div class="hero-right">
+        <img src="/static/AstroJyotishalogo.png?v=1" alt="AstroJyotisha Logo" class="hero-logo" />
+        <p class="hero-contact">Questions? Email us at <a href="mailto:seva@dharmpathusa.com" class="hero-contact-link">seva@dharmpathusa.com</a></p>
+      </div>
     </header>
 
     <main class="layout">
@@ -27,16 +31,16 @@
         <form id="kundliForm">
           <div class="grid-2">
             <label>Date of Birth
-              <input type="date" name="birth_date" id="birth_date" value="1978-04-27" required />
+              <input type="date" name="birth_date" id="birth_date" required />
             </label>
             <label>Time of Birth
-              <input type="time" name="birth_time" id="birth_time" value="02:00" required />
+              <input type="time" name="birth_time" id="birth_time" required />
             </label>
           </div>
 
           <label>Birth Location
             <div class="search-row">
-              <input name="location" id="location" value="Basti Uttar Pradesh India" placeholder="Basti, UP, India" />
+              <input name="location" id="location" placeholder="e.g. New Delhi, India" />
               <button type="button" id="searchLocation">Search</button>
             </div>
           </label>
@@ -45,18 +49,18 @@
 
           <div class="grid-3">
             <label>Latitude
-              <input name="latitude" id="latitude" value="26.8177" required />
+              <input name="latitude" id="latitude" placeholder="e.g. 28.6139" required />
             </label>
             <label>Longitude
-              <input name="longitude" id="longitude" value="82.7633" required />
+              <input name="longitude" id="longitude" placeholder="e.g. 77.2090" required />
             </label>
             <label>Timezone Offset
-              <input name="timezone" id="timezone" value="5.5" required />
+              <input name="timezone" id="timezone" placeholder="e.g. 5.5" required />
             </label>
           </div>
 
           <label>Selected Place
-            <input name="place" id="place" value="Basti, Uttar Pradesh, India" />
+            <input name="place" id="place" placeholder="Auto-filled after location search" />
           </label>
 
           <div class="actions">
@@ -92,6 +96,6 @@
     </main>
   </div>
 
-  <script src="/static/app.js?v=11"></script>
+  <script src="/static/app.js?v=12"></script>
 </body>
 </html>

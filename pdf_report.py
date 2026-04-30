@@ -94,7 +94,7 @@ def _header_footer(c, section: str, page_num: int):
     c.setFont("Helvetica-Oblique", 7)
     c.drawString(
         LM, FTR_H - 14,
-        f"Dharma Path USA Foundation  |  dharmapath.org  |  "
+        f"Dharma Path USA Foundation  |  "
         f"Generated: {datetime.now().strftime('%B %d, %Y')}  |  "
         "For spiritual guidance & educational purposes only",
     )
@@ -343,7 +343,7 @@ def _cover_page(c, bd: dict, result: dict):
 
     c.setFillColor(C_WHITE)
     c.setFont("Helvetica-Bold", 9)
-    c.drawCentredString(PW / 2, 32, "Dharma Path USA Foundation  |  dharmapath.org")
+    c.drawCentredString(PW / 2, 32, "Dharma Path USA Foundation")
     c.setFillColor(C_PEACH)
     c.setFont("Helvetica-Oblique", 7.5)
     c.drawCentredString(
