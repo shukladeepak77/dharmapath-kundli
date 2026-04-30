@@ -1,6 +1,16 @@
 let lastResult = null;
 let currentChart = "d1";
 
+// Set default date to today and time to 12:00
+const _today = new Date();
+const _yyyy = _today.getFullYear();
+const _mm = String(_today.getMonth() + 1).padStart(2, "0");
+const _dd = String(_today.getDate()).padStart(2, "0");
+document.addEventListener("DOMContentLoaded", () => {
+  $("birth_date").value = `2010-${_mm}-${_dd}`;
+  $("birth_time").value = "12:00";
+});
+
 const PLANET_FULL_NAMES = {
   "La": "Lagna",         "Su": "Sun / Surya",      "Mo": "Moon / Chandra",
   "Ma": "Mars / Mangal", "Me": "Mercury / Budh",    "Ju": "Jupiter / Guru",
@@ -186,12 +196,9 @@ async function generateKundli(event) {
   renderAll(lastResult);
 }
 
-function downloadJson() {
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = "/generate-file";
-
-  const fields = {
+async function downloadJson() {
+  const btn = $("downloadJson");
+  const payload = {
     birth_date: $("birth_date").value,
     birth_time: $("birth_time").value,
     place: $("place").value,
@@ -200,17 +207,34 @@ function downloadJson() {
     timezone_offset_hours: $("timezone").value,
   };
 
-  for (const [key, value] of Object.entries(fields)) {
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = key;
-    input.value = value;
-    form.appendChild(input);
-  }
+  btn.textContent = "Generating…";
+  btn.disabled = true;
 
-  document.body.appendChild(form);
-  form.submit();
-  form.remove();
+  try {
+    const res = await fetch("/generate-file", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      alert("Failed to generate PDF. Please fill in all fields and try again.");
+      return;
+    }
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `kundli_${payload.birth_date}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } finally {
+    btn.textContent = "Download Kundli";
+    btn.disabled = false;
+  }
 }
 
 $("searchLocation").addEventListener("click", searchLocation);

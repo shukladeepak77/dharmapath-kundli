@@ -245,6 +245,13 @@ def _cover_page(c, bd: dict, result: dict):
         f"Report Date: {datetime.now().strftime('%B %d, %Y')}",
     )
 
+    c.setFillColor(colors.HexColor("#fbbf24"))
+    c.setFont("Helvetica", 8.5)
+    c.drawCentredString(
+        PW / 2, PH - 242,
+        "Questions? Email us at  seva@dharmpathusa.com",
+    )
+
     # ── Cream body ────────────────────────────────────────────────────────────
     c.setFillColor(C_CREAM)
     c.rect(0, 0, PW, PH - band_h - 3, fill=1, stroke=0)
@@ -317,20 +324,40 @@ def _cover_page(c, bd: dict, result: dict):
     c.setLineWidth(0.8)
     c.line(LM + 60, shloka_y - 12, PW - RM - 60, shloka_y - 12)
 
-    c.setFillColor(C_MUTED)
-    c.setFont("Helvetica-Oblique", 7.5)
     disclaimer_lines = [
-        "This Janam Kundli report is intended solely for spiritual guidance, self-reflection, and educational purposes.",
-        "It does not constitute medical, psychological, legal, financial, or any other form of professional advice.",
-        "Astrological interpretations are rooted in classical Vedic Jyotish traditions and are presented as one lens",
-        "through which to understand life patterns — not as deterministic predictions or guaranteed outcomes.",
-        "Individual results may vary. Dharma Path USA Foundation makes no warranties, express or implied,",
-        "regarding the accuracy, completeness, or suitability of this report for any particular purpose.",
-        "The Foundation assumes no liability for any decisions, actions, or consequences arising from use of this report.",
-        "Free will, sincere personal effort, and the grace of the Divine remain the ultimate determinants of one’s destiny.",
+        "This Janam Kundli report is intended solely for spiritual guidance, self-reflection,",
+        "and educational purposes. It does not constitute medical, psychological, legal,",
+        "financial, or any other form of professional advice. Astrological interpretations are",
+        "rooted in classical Vedic Jyotish traditions and are presented as one lens through",
+        "which to understand life patterns — not as deterministic predictions or guaranteed",
+        "outcomes. Individual results may vary. Dharma Path USA Foundation makes no warranties,",
+        "express or implied, regarding the accuracy, completeness, or suitability of this report",
+        "for any particular purpose. The Foundation assumes no liability for any decisions,",
+        "actions, or consequences arising from use of this report. Free will, sincere personal",
+        "effort, and the grace of the Divine remain the ultimate determinants of one’s destiny.",
     ]
-    line_spacing = 13
-    dy = shloka_y - 26
+    line_spacing = 14
+    box_padding = 10
+    box_h = len(disclaimer_lines) * line_spacing + box_padding * 2 + 4
+    box_y = shloka_y - 22 - box_h
+    box_x = LM + 20
+    box_w = PW - LM - RM - 40
+
+    # Light background box with amber border
+    c.setFillColor(colors.HexColor("#fffbeb"))
+    c.roundRect(box_x, box_y, box_w, box_h, 6, fill=1, stroke=0)
+    c.setStrokeColor(C_AMBER)
+    c.setLineWidth(1)
+    c.roundRect(box_x, box_y, box_w, box_h, 6, fill=0, stroke=1)
+
+    # "DISCLAIMER" label
+    c.setFillColor(C_MAROON)
+    c.setFont("Helvetica-Bold", 8)
+    c.drawCentredString(PW / 2, box_y + box_h - box_padding - 2, "DISCLAIMER")
+
+    c.setFillColor(C_TEXT)
+    c.setFont("Helvetica", 8)
+    dy = box_y + box_h - box_padding - 16
     for line in disclaimer_lines:
         c.drawCentredString(PW / 2, dy, line)
         dy -= line_spacing
@@ -481,6 +508,23 @@ def _dasha_page(c, page_num: int, result: dict):
         LM, y,
         "✱  Sub-period (Antardasha) and Pratyantardasha calculations available on request.",
     )
+    y -= 40
+
+    # Next-page notice box
+    box_w = PW - LM - RM
+    box_h = 52
+    c.setFillColor(colors.HexColor("#fff7ed"))
+    c.roundRect(LM, y - box_h, box_w, box_h, 8, fill=1, stroke=0)
+    c.setStrokeColor(C_AMBER)
+    c.setLineWidth(1.2)
+    c.roundRect(LM, y - box_h, box_w, box_h, 8, fill=0, stroke=1)
+
+    c.setFillColor(C_MAROON)
+    c.setFont("Helvetica-Bold", 11)
+    c.drawCentredString(PW / 2, y - 20, "Kundli Insights & Reflections")
+    c.setFillColor(C_TEXT)
+    c.setFont("Helvetica", 9)
+    c.drawCentredString(PW / 2, y - 36, "The Vedic analysis and planetary insights begin on the next page.")
 
 
 # ── Interpretation pages ──────────────────────────────────────────────────────

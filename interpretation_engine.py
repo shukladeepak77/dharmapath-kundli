@@ -43,6 +43,67 @@ HOUSE_MEANINGS = {
     12: "expenses, sleep, foreign lands, isolation, moksha, spirituality and surrender",
 }
 
+HOUSE_INTRO = {
+    1: (
+        "The 1st house represents the self, personality, physical presence, and overall life direction. "
+        "It reflects how one approaches life and how others perceive them. Influences on this house shape "
+        "confidence, vitality, behavior, and the individual's fundamental outlook toward experiences and challenges."
+    ),
+    2: (
+        "The 2nd house governs wealth, speech, family values, and material resources. It reflects how one "
+        "earns, saves, and manages financial stability, as well as the manner of communication and attachment "
+        "to possessions and security."
+    ),
+    3: (
+        "The 3rd house signifies courage, initiative, communication, and personal effort. It reflects "
+        "determination, skill development, and the willingness to take action. It also governs relationships "
+        "with siblings and the ability to pursue goals with persistence."
+    ),
+    4: (
+        "The 4th house represents home, emotional well-being, inner peace, and foundational security. "
+        "It reflects one's connection to family, comfort, and sense of belonging, as well as mental peace "
+        "and contentment."
+    ),
+    5: (
+        "The 5th house governs creativity, intellect, learning, and self-expression. It reflects one's "
+        "ability to think, create, and express individuality. It is also associated with joy, inspiration, "
+        "and the pursuit of knowledge and meaningful experiences."
+    ),
+    6: (
+        "The 6th house represents challenges, discipline, health, and service. It reflects one's ability "
+        "to handle obstacles, maintain routine, and grow through effort. This house also governs work ethic, "
+        "responsibilities, and the ability to overcome difficulties."
+    ),
+    7: (
+        "The 7th house governs partnerships, relationships, and interactions with others. It reflects how "
+        "one connects, cooperates, and forms meaningful bonds, including marriage and professional partnerships."
+    ),
+    8: (
+        "The 8th house represents transformation, hidden aspects of life, and deep inner change. It reflects "
+        "one's ability to navigate uncertainty, explore deeper truths, and undergo personal evolution through "
+        "life's intense experiences."
+    ),
+    9: (
+        "The 9th house governs higher knowledge, wisdom, spirituality, and life philosophy. It reflects "
+        "one's belief systems, guidance, and connection to purpose, as well as opportunities for growth "
+        "through learning and exploration."
+    ),
+    10: (
+        "The 10th house represents career, achievements, reputation, and public life. It reflects one's "
+        "ambitions, responsibilities, and the role they play in society, shaping professional success "
+        "and recognition."
+    ),
+    11: (
+        "The 11th house governs gains, aspirations, and social connections. It reflects fulfillment of "
+        "desires, achievements through networks, and the ability to realize long-term goals."
+    ),
+    12: (
+        "The 12th house represents the inner world, detachment, and spiritual growth. It reflects "
+        "introspection, release, and the ability to move beyond material attachments toward deeper "
+        "understanding and peace."
+    ),
+}
+
 PLANET_MEANINGS = {
     "Sun": "soul, authority, father, confidence, government, leadership and vitality",
     "Moon": "mind, emotions, mother, comfort, public connection and mental peace",
@@ -100,7 +161,7 @@ DASHA_GENERAL = {
     "Ketu": (
         "Ketu Mahadasha may bring detachment, spirituality, isolation, inner search, "
         "past-life karma and liberation themes. It may reduce worldly attachment and push "
-        "the native toward deeper self-understanding."
+        "the individual toward deeper self-understanding."
     ),
 }
 
@@ -126,7 +187,7 @@ def interpret_lagna(result):
         f"The Lagna is in {rashi}. This gives a {RASHI_NATURE.get(rashi, 'distinct')} personality pattern.",
         (
             f"Lagna falls at {lagna['degree_in_rashi']:.2f}° in {rashi}, in "
-            f"{lagna['nakshatra']} nakshatra pada {lagna['pada']}. This point represents the native's body, "
+            f"{lagna['nakshatra']} nakshatra pada {lagna['pada']}. This point represents the individual's body, "
             f"temperament, identity, health tendency and life direction."
         ),
     ]
@@ -159,30 +220,46 @@ def interpret_houses(result):
         ]
 
         if house == 1:
-            planets = [
-                p for p, pos in d1.items()
-                if pos["house"] == house
-            ]
-
-        paragraphs = [
-            f"The {house} house represents {HOUSE_MEANINGS[house]}."
-        ]
-
-        if planets:
-            paragraphs.append(
-                f"Planets influencing this house by placement: {', '.join(planets)}."
-            )
+            lagna_pos = d1["Lagna"]
+            if planets:
+                planet_list = ", ".join(planets)
+                paragraphs = [
+                    HOUSE_INTRO[1],
+                    f"This house is anchored by the Ascendant (Lagna) in {lagna_pos['rashi']}, "
+                    f"and is further influenced by the presence of {planet_list}. "
+                    "Together, these energies shape the individual's outward personality, physical constitution, and life approach.",
+                ]
+            else:
+                paragraphs = [
+                    HOUSE_INTRO[1],
+                    f"This house is anchored by the Ascendant (Lagna) in {lagna_pos['rashi']}. "
+                    "No additional planets are directly placed here, so the expression of self is shaped "
+                    "primarily by the Lagna sign, its lord, and active dasha periods.",
+                ]
             for planet in planets:
                 pos = d1[planet]
                 meaning = PLANET_MEANINGS.get(planet, "")
                 paragraphs.append(
-                    f"{planet} represents {meaning}. Since it is placed in the {house} house, "
-                    f"its energy becomes connected with {HOUSE_MEANINGS[house]}."
+                    f"{planet} represents {meaning}. Its placement in the 1st house directly "
+                    f"colours the individual's personality, appearance, and self-expression."
                 )
         else:
-            paragraphs.append(
-                "No major planet is directly placed in this house. Results will depend on the house lord, aspects and dasha periods."
-            )
+            paragraphs = [HOUSE_INTRO[house]]
+            if planets:
+                paragraphs.append(
+                    f"Planets influencing this house by placement: {', '.join(planets)}."
+                )
+                for planet in planets:
+                    pos = d1[planet]
+                    meaning = PLANET_MEANINGS.get(planet, "")
+                    paragraphs.append(
+                        f"{planet} represents {meaning}. Since it is placed in the {house} house, "
+                        f"its energy becomes connected with {HOUSE_MEANINGS[house]}."
+                    )
+            else:
+                paragraphs.append(
+                    "No major planet is directly placed in this house. Results will depend on the house lord, aspects and dasha periods."
+                )
 
         sections.append({
             "title": f"Bhava {house} Interpretation",
@@ -292,22 +369,60 @@ def find_special_aspects(result):
     }
 
 
+D9_PLANET_THEMES = {
+    "Sun":     "inner authority, soul purpose, and dharmic identity",
+    "Moon":    "emotional maturity, inner peace, and relational sensitivity",
+    "Mars":    "inner drive, courage in commitments, and deeper willpower",
+    "Mercury": "communication in relationships, adaptability, and inner intellect",
+    "Jupiter": "wisdom, dharmic expansion, and blessings in marriage and spiritual growth",
+    "Venus":   "relationship harmony, marriage potential, and inner values",
+    "Saturn":  "karmic discipline, long-term commitment, and inner resilience",
+    "Rahu":    "deeper ambitions, karmic desires, and unconventional inner growth",
+    "Ketu":    "past-life wisdom, spiritual detachment, and inner liberation",
+}
+
 def interpret_d9(result):
     d9 = get_chart(result, "d9_navamsa_chart")
     d1 = get_chart(result, "d1_rashi_chart")
 
     paragraphs = [
-        "D9 Navamsa is used to understand dharma, inner maturity, marriage potential, spouse-related themes and deeper planetary strength.",
-        "A planet strong in D9 may improve its results over time, even if its D1 placement appears challenging.",
+        "The D9 Navamsa chart reveals the deeper dimensions of the birth chart — dharma, inner maturity, "
+        "marriage potential, and the true strength of each planet as it matures over time.",
+        "A planet placed in the same sign in both D1 and D9 is called Vargottama, a classical indicator "
+        "of heightened strength and clarity of expression across the lifetime.",
     ]
 
-    for planet in ["Lagna", "Venus", "Jupiter", "Saturn", "Moon"]:
-        if planet in d9:
-            pos = d9[planet]
-            paragraphs.append(
-                f"In D9, {planet} is in {pos['rashi']} house {pos['house']}. "
-                f"This adds a {RASHI_NATURE.get(pos['rashi'], 'specific')} inner expression."
-            )
+    # Lagna
+    lagna_d9 = d9.get("Lagna")
+    lagna_d1 = d1.get("Lagna")
+    if lagna_d9:
+        varg = " This Lagna is Vargottama, indicating a strong and consistent sense of self." \
+            if lagna_d9["rashi"] == lagna_d1["rashi"] else ""
+        paragraphs.append(
+            f"The D9 Ascendant falls in {lagna_d9['rashi']} (house {lagna_d9['house']}), "
+            f"shaping the individual's inner character, dharmic inclination, and approach to relationships.{varg}"
+        )
+
+    # All 9 planets
+    planet_order = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"]
+    for planet in planet_order:
+        pos9 = d9.get(planet)
+        pos1 = d1.get(planet)
+        if not pos9:
+            continue
+        theme = D9_PLANET_THEMES.get(planet, "inner expression")
+        nature = RASHI_NATURE.get(pos9["rashi"], "distinctive")
+        varg = ""
+        if pos1 and pos9["rashi"] == pos1["rashi"]:
+            varg = f" Being Vargottama (same sign in D1 and D9), {planet}'s influence is considered especially potent and enduring."
+        retro = ""
+        if pos9.get("retrograde") and planet not in ("Rahu", "Ketu"):
+            retro = " Its retrograde state in D9 suggests a more internalised and reflective expression of these themes."
+        paragraphs.append(
+            f"{planet} in D9 is placed in {pos9['rashi']} (house {pos9['house']}), "
+            f"in {pos9['nakshatra']} nakshatra pada {pos9['pada']}. "
+            f"This {nature} placement deepens the individual's {theme}.{varg}{retro}"
+        )
 
     return {
         "title": "D9 Navamsa Interpretation",

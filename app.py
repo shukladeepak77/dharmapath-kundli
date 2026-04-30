@@ -4,7 +4,7 @@ from chart_generator import generate_kundli_chart
 from pdf_report import build_kundli_pdf
 
 import httpx
-from fastapi import FastAPI, Form, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -93,31 +93,33 @@ async def generate_kundli(payload: dict):
 
 
 @app.post("/generate-file")
-async def generate_file(
-    birth_date: str = Form(...),
-    birth_time: str = Form(...),
-    place: str = Form(...),
-    latitude: float = Form(...),
-    longitude: float = Form(...),
-    timezone_offset_hours: float = Form(...),
-):
-    birth_data = BirthData(
-        birth_datetime_local=f"{birth_date} {birth_time}:00",
-        timezone_offset_hours=timezone_offset_hours,
-        latitude=latitude,
-        longitude=longitude,
-        place=place,
-    )
+async def generate_file(payload: dict):
+    try:
+        birth_date = payload["birth_date"]
+        birth_time = payload["birth_time"]
+        birth_data = BirthData(
+            birth_datetime_local=f"{birth_date} {birth_time}:00",
+            timezone_offset_hours=float(payload["timezone_offset_hours"]),
+            latitude=float(payload["latitude"]),
+            longitude=float(payload["longitude"]),
+            place=payload.get("place", ""),
+        )
 
-    engine = KundliEngine(birth_data)
-    result = engine.calculate_all()
-    generate_kundli_chart(result["d1_rashi_chart"])
-    interpretation_sections = generate_interpretation_report(result)
+        engine = KundliEngine(birth_data)
+        result = engine.calculate_all()
+        generate_kundli_chart(result["d1_rashi_chart"])
+        interpretation_sections = generate_interpretation_report(result)
 
-    filename = f"kundli_{birth_date}.pdf"
-    path = os.path.join("/tmp", filename)
+        filename = f"kundli_{birth_date}.pdf"
+        path = os.path.join("/tmp", filename)
+        build_kundli_pdf(result, interpretation_sections, path)
 
-    build_kundli_pdf(result, interpretation_sections, path)
-
-    return FileResponse(path, media_type="application/pdf", filename=filename)
+        return FileResponse(
+            path,
+            media_type="application/pdf",
+            filename=filename,
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
