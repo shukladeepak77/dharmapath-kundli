@@ -534,15 +534,7 @@ def _interpretation_pages(c, start_page: int, sections: list):
     y = _new_content_page(c, "Kundli Interpretation", page_num)
     y -= 8
 
-    # Page-level title
-    c.setFillColor(C_MAROON)
-    c.setFont("Helvetica-Bold", 15)
-    c.drawString(LM, y, "Detailed Kundli Interpretation")
     y -= 8
-    c.setStrokeColor(C_AMBER)
-    c.setLineWidth(1.5)
-    c.line(LM, y, PW - RM, y)
-    y -= 18
 
     usable_w = PW - LM - RM - 16   # indent for accent bar
 

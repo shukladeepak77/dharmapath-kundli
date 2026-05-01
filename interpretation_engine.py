@@ -573,14 +573,6 @@ def interpret_spirituality(result):
 def generate_interpretation_report(result):
     sections = []
 
-    sections.append({
-        "title": "Important Note",
-        "paragraphs": [
-            "This report is generated through a rule-based Jyotish interpretation engine. It is intended for spiritual guidance, self-reflection and educational use.",
-            "Predictions should not be treated as guaranteed events. Free will, karma, environment and personal choices also shape life outcomes.",
-        ],
-    })
-
     sections.append(interpret_lagna(result))
     sections.extend(interpret_houses(result))
     sections.extend(interpret_planets(result))
