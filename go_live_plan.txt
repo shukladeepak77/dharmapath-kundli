@@ -1,0 +1,206 @@
+===============================================================
+  DHARMAPATH KUNDLI — GO-LIVE PLAN
+  Target Go-Live Date: Tuesday, 5th May 2026
+  Server IP: 34.44.177.74
+  Domain Registrar: GoDaddy
+===============================================================
+
+
+DAY-BY-DAY SCHEDULE
+-------------------
+
+Friday, 1st May       → Phase 1: Update GoDaddy DNS
+Saturday, 2nd May     → Phase 2: Server setup (systemd service)
+Sunday, 3rd May       → Phase 3 & 4: Nginx + SSL certificate
+Monday, 4th May       → Phase 5: Final testing on live domain
+Tuesday, 5th May      → GO LIVE ✓
+
+
+===============================================================
+PHASE 1 — POINT GODADDY DOMAIN TO YOUR SERVER
+(Do this today — DNS needs time to propagate)
+===============================================================
+
+1. Log in to GoDaddy → My Products → DNS → Manage
+
+2. Find the A Record (Type: A, Name: @)
+   Edit it → set Value to: 34.44.177.74
+   Set TTL to: 600 seconds (10 minutes)
+
+3. Add a CNAME record:
+   Type  : CNAME
+   Name  : www
+   Value : @
+   (This makes www.yourdomain.com work as well)
+
+4. Save changes.
+   DNS propagation typically takes 10 minutes to a few hours.
+
+5. Verify DNS has propagated by running this command:
+   ping yourdomain.com
+   (Should resolve to 34.44.177.74)
+
+
+===============================================================
+PHASE 2 — SERVER SETUP: SYSTEMD SERVICE
+(Saturday, 2nd May — run on your GCP VM via SSH)
+===============================================================
+
+SSH into your server first, then run:
+
+  sudo apt update
+  sudo apt install -y nginx certbot python3-certbot-nginx
+
+Create the systemd service file:
+
+  sudo nano /etc/systemd/system/kundli.service
+
+Paste the following content into the file:
+
+  [Unit]
+  Description=DharmaPath Kundli Web App
+  After=network.target
+
+  [Service]
+  User=shukla_deepak77
+  WorkingDirectory=/home/shukla_deepak77/kundliapp/kundligood/dharmapath_kundli_webapp
+  ExecStart=/home/shukla_deepak77/kundliapp/kundligood/dharmapath_kundli_webapp/venv/bin/uvicorn app:app --host 127.0.0.1 --port 8000
+  Restart=always
+  RestartSec=5
+
+  [Install]
+  WantedBy=multi-user.target
+
+Save the file (Ctrl+O, Enter, Ctrl+X), then run:
+
+  sudo systemctl daemon-reload
+  sudo systemctl enable kundli
+  sudo systemctl start kundli
+  sudo systemctl status kundli
+
+You should see: active (running) in green.
+
+
+===============================================================
+PHASE 3 — CONFIGURE NGINX REVERSE PROXY
+(Sunday, 3rd May)
+===============================================================
+
+Create the Nginx site config:
+
+  sudo nano /etc/nginx/sites-available/kundli
+
+Paste the following (replace yourdomain.com with your actual domain):
+
+  server {
+      listen 80;
+      server_name yourdomain.com www.yourdomain.com;
+
+      location / {
+          proxy_pass http://127.0.0.1:8000;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+      }
+  }
+
+Save the file, then run:
+
+  sudo ln -s /etc/nginx/sites-available/kundli /etc/nginx/sites-enabled/
+  sudo nginx -t
+  (Should say: syntax is ok / test is successful)
+
+  sudo systemctl restart nginx
+
+Test by visiting: http://yourdomain.com
+(Should show the Kundli app — still HTTP at this stage)
+
+
+===============================================================
+PHASE 4 — SSL CERTIFICATE (HTTPS)
+(Sunday, 3rd May — do AFTER DNS has fully propagated)
+===============================================================
+
+Run Certbot to get a free Let's Encrypt SSL certificate:
+
+  sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+
+Certbot will:
+  - Ask for your email address (for renewal alerts)
+  - Automatically update the Nginx config for HTTPS
+  - Set up auto-redirect from http:// to https://
+
+Verify the auto-renewal works:
+
+  sudo certbot renew --dry-run
+
+After this step, your site will be live on HTTPS.
+The Chrome "Not Secure" warning will be gone.
+Certificate renews automatically every 90 days.
+
+
+===============================================================
+PHASE 5 — GCP FIREWALL CHECK
+(Monday, 4th May — verify ports 80 and 443 are open)
+===============================================================
+
+Option A — Via terminal:
+
+  gcloud compute firewall-rules list
+
+  If http/https rules are not listed, add them:
+
+  gcloud compute firewall-rules create allow-http \
+    --allow tcp:80 --target-tags http-server
+
+  gcloud compute firewall-rules create allow-https \
+    --allow tcp:443 --target-tags https-server
+
+Option B — Via GCP Console:
+  Go to: GCP Console → VPC Network → Firewall → Add Firewall Rule
+  Add rules to allow TCP port 80 and TCP port 443
+
+
+===============================================================
+FINAL TESTING CHECKLIST (Monday, 4th May)
+===============================================================
+
+  [ ] https://yourdomain.com loads correctly
+  [ ] https://www.yourdomain.com loads correctly
+  [ ] http://yourdomain.com redirects to https://
+  [ ] No "Not Secure" warning in Chrome
+  [ ] Location search works
+  [ ] Kundli generation works
+  [ ] PDF download works without Chrome "Keep" warning
+  [ ] Contact email link (seva@dharmpathusa.com) is visible
+  [ ] PDF opens correctly with all pages
+  [ ] Test on mobile browser as well
+
+
+===============================================================
+GO LIVE — Tuesday, 5th May 2026 ✓
+===============================================================
+
+Useful commands after go-live:
+
+  Check app status:
+  sudo systemctl status kundli
+
+  Restart app (after code updates):
+  sudo systemctl restart kundli
+
+  View app logs:
+  sudo journalctl -u kundli -f
+
+  Restart Nginx:
+  sudo systemctl restart nginx
+
+  View Nginx error logs:
+  sudo tail -f /var/log/nginx/error.log
+
+
+===============================================================
+SUPPORT
+  For queries: seva@dharmpathusa.com
+===============================================================

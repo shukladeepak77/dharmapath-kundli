@@ -82,9 +82,9 @@ def _header_footer(c, section: str, page_num: int):
 
     c.setFillColor(C_WHITE)
     c.setFont("Helvetica-Bold", 8.5)
-    c.drawString(LM, PH - 22, "DHARMA PATH USA FOUNDATION  •  JANAM KUNDLI")
+    c.drawString(LM, PH - 22, "DHARMA PATH USA FOUNDATION")
     c.setFont("Helvetica", 8.5)
-    c.drawRightString(PW - RM, PH - 22, f"{section.upper()}  |  PAGE {page_num}")
+    c.drawRightString(PW - RM, PH - 22, f"PAGE {page_num}")
 
     # Footer line
     c.setStrokeColor(C_AMBER)

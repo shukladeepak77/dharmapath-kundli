@@ -340,14 +340,32 @@ def find_conjunctions(result):
 
 def find_special_aspects(result):
     d1 = get_chart(result)
-    paragraphs = []
+    paragraphs = [
+        "In Vedic astrology, drishti (aspect) represents the directional influence of a planet. "
+        "A planet not only impacts the house it occupies, but also projects its energy onto specific "
+        "houses through aspects.",
+        "These aspects modify the results of the aspected house by introducing the nature of the "
+        "influencing planet — whether it brings growth, discipline, intensity, confusion or detachment.",
+        "Understanding drishti helps reveal hidden connections between different areas of life and "
+        "shows how one domain influences another.",
+        "General Drishti Rules: Every planet aspects the 7th house from its position (full opposite aspect). "
+        "In addition, Mars casts special aspects on the 4th and 8th houses from its placement. "
+        "Jupiter aspects the 5th and 9th houses from its placement. "
+        "Saturn aspects the 3rd and 10th houses from its placement. "
+        "Rahu and Ketu, like Jupiter, aspect the 5th and 9th houses from their placement. "
+        "Sun, Moon, Mercury and Venus cast only the standard 7th house aspect.",
+    ]
 
     aspect_rules = {
-        "Mars": [4, 7, 8],
+        "Sun":     [7],
+        "Moon":    [7],
+        "Mercury": [7],
+        "Venus":   [7],
+        "Mars":    [4, 7, 8],
         "Jupiter": [5, 7, 9],
-        "Saturn": [3, 7, 10],
-        "Rahu": [5, 7, 9],
-        "Ketu": [5, 7, 9],
+        "Saturn":  [3, 7, 10],
+        "Rahu":    [5, 7, 9],
+        "Ketu":    [5, 7, 9],
     }
 
     for planet, aspects in aspect_rules.items():
