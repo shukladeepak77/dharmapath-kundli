@@ -33,6 +33,15 @@ const housePositions = {
 
 function $(id) { return document.getElementById(id); }
 
+function esc(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function degreeText(value) {
   const d = Math.floor(value);
   const m = Math.floor((value - d) * 60);
@@ -60,7 +69,7 @@ async function searchLocation() {
     $("timezone").value = loc.gmtOffset;
   }
   $("place").value = loc.display;
-  $("locationResults").innerHTML = `<div class="loc-item"><strong>✓ ${loc.display}</strong> &nbsp;·&nbsp; Lat ${loc.lat}, Lng ${loc.lng}, TZ ${loc.gmtOffset ?? "—"}</div>`;
+  $("locationResults").innerHTML = `<div class="loc-item"><strong>✓ ${esc(loc.display)}</strong> &nbsp;·&nbsp; Lat ${esc(loc.lat)}, Lng ${esc(loc.lng)}, TZ ${esc(loc.gmtOffset ?? "—")}</div>`;
 }
 
 function renderSummary(result) {
@@ -68,11 +77,11 @@ function renderSummary(result) {
   $("summary").innerHTML = `
     <h2>Kundli Report</h2>
     <div class="summary-grid">
-      <div class="summary-item"><span>Birth</span>${bd.birth_datetime_local}</div>
-      <div class="summary-item"><span>Place</span>${bd.place}</div>
-      <div class="summary-item"><span>UTC</span>${result.utc_datetime}</div>
-      <div class="summary-item"><span>Ayanamsha</span>${result.ayanamsha_lahiri}</div>
-      <div class="summary-item"><span>Julian Day</span>${result.julian_day_ut}</div>
+      <div class="summary-item"><span>Birth</span>${esc(bd.birth_datetime_local)}</div>
+      <div class="summary-item"><span>Place</span>${esc(bd.place)}</div>
+      <div class="summary-item"><span>UTC</span>${esc(result.utc_datetime)}</div>
+      <div class="summary-item"><span>Ayanamsha</span>${esc(result.ayanamsha_lahiri)}</div>
+      <div class="summary-item"><span>Julian Day</span>${esc(result.julian_day_ut)}</div>
     </div>
   `;
 }
@@ -188,7 +197,7 @@ async function generateKundli(event) {
 
   if (!res.ok) {
     const err = await res.json();
-    $("summary").innerHTML = `<h2>Error</h2><p>${err.detail || "Failed to generate kundli."}</p>`;
+    $("summary").innerHTML = `<h2>Error</h2><p>${esc(err.detail || "Failed to generate kundli.")}</p>`;
     return;
   }
 
