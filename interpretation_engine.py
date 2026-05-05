@@ -31,76 +31,73 @@ RASHI_NATURE = {
 RASHI_DESCRIPTION = {
     "Mesha": (
         "Mesha (Aries) is the first sign of the zodiac, a cardinal fire sign governed by Mars. It embodies "
-        "initiation, courage, and a pioneering spirit. Planets placed here become dynamic, direct, and action-oriented, "
-        "with a natural drive to lead, compete, and forge new paths. There is boldness and enthusiasm in expression, "
+        "initiation, courage, and a pioneering spirit. There is boldness and enthusiasm in its expression, "
         "though impulsiveness may need to be consciously directed toward constructive ends."
     ),
     "Vrishabha": (
         "Vrishabha (Taurus) is a fixed earth sign ruled by Venus. It brings stability, patience, and a deep "
-        "appreciation for beauty, comfort, and material security. Planets placed here express themselves steadily "
-        "and persistently, guided by a strong sense of values and loyalty. There is sensuality, practicality, and "
+        "appreciation for beauty, comfort, and material security. There is sensuality, practicality, and "
         "groundedness in this sign. When pressed for change too quickly, a stubborn streak may surface."
     ),
     "Mithuna": (
-        "Mithuna (Gemini) is a mutable air sign ruled by Mercury. It infuses planets with intellectual curiosity, "
+        "Mithuna (Gemini) is a mutable air sign ruled by Mercury. It carries intellectual curiosity, "
         "communicative skill, and versatile adaptability. There is a love of ideas, information, and variety in "
-        "expression. Planets here thrive through wit, analysis, and the exchange of knowledge. The mind is agile "
-        "and quick, though scattered focus may arise when multiple interests compete for attention simultaneously."
+        "expression. The mind is agile and quick, though scattered focus may arise when multiple interests "
+        "compete for attention simultaneously."
     ),
     "Karka": (
         "Karka (Cancer) is a cardinal water sign ruled by the Moon. It brings emotional depth, nurturing instincts, "
-        "and a strong connection to home and family. Planets placed here are sensitive, protective, and deeply "
-        "intuitive. There is a natural empathy and a genuine desire to care for others. Emotional fluctuations may "
-        "arise, yet this sign carries a profound inner strength rooted in feeling, memory, and belonging."
+        "and a strong connection to home and family. There is a natural empathy and a genuine desire to care for "
+        "others. Emotional fluctuations may arise, yet this sign carries a profound inner strength rooted in "
+        "feeling, memory, and belonging."
     ),
     "Simha": (
         "Simha (Leo) is a fixed fire sign ruled by the Sun. It bestows confidence, dignity, creativity, and a "
-        "natural flair for self-expression and leadership. Planets placed here radiate warmth and magnanimity, "
-        "with an innate desire to shine and inspire. Pride is a defining quality — when well-directed, it becomes "
+        "natural flair for self-expression and leadership. There is warmth and magnanimity in this sign, with an "
+        "innate desire to shine and inspire. Pride is a defining quality — when well-directed, it becomes "
         "genuine greatness, generosity, and a gift for uplifting those around them."
     ),
     "Kanya": (
         "Kanya (Virgo) is a mutable earth sign ruled by Mercury. It imparts precision, analytical ability, and "
-        "a deep commitment to service and continuous self-improvement. Planets placed here are detail-oriented, "
-        "systematic, and practically minded. There is a strong desire to refine, organise, and contribute "
-        "meaningfully. Critical thinking is a natural gift, though the tendency toward perfectionism may need "
-        "to be balanced with patience and acceptance."
+        "a deep commitment to service and continuous self-improvement. There is a strong desire to refine, "
+        "organise, and contribute meaningfully. Critical thinking is a natural gift, though the tendency toward "
+        "perfectionism may need to be balanced with patience and acceptance."
     ),
     "Tula": (
         "Tula (Libra) is a cardinal air sign ruled by Venus. It brings balance, diplomacy, aesthetic refinement, "
-        "and a deep desire for harmonious relationships. Planets placed here seek fairness, beauty, and cooperation, "
-        "and are skilled at navigating social dynamics with grace. The ability to see multiple perspectives is a "
-        "strength. Indecisiveness may arise when equally weighted options require a decisive choice."
+        "and a deep desire for harmonious relationships. There is a natural pursuit of fairness, beauty, and "
+        "cooperation, with skill in navigating social dynamics gracefully. The ability to see multiple perspectives "
+        "is a strength, though indecisiveness may arise when equally weighted options require a clear choice."
     ),
     "Vrishchika": (
         "Vrishchika (Scorpio) is a fixed water sign co-ruled by Mars and Ketu. It imparts intensity, depth, and "
-        "transformative power. Planets placed here operate with focused determination, probing beneath the surface "
-        "of experience. There is a natural inclination toward research, psychology, and hidden matters. Resilience "
-        "is extraordinary — the individual often emerges profoundly strengthened through deep inner change and transformation."
+        "transformative power. There is a natural inclination toward research, psychology, and hidden matters, "
+        "with a focused determination to probe beneath the surface of experience. Resilience is extraordinary — "
+        "the individual often emerges profoundly strengthened through deep inner change and transformation."
     ),
     "Dhanu": (
-        "Dhanu (Sagittarius) is a mutable fire sign ruled by Jupiter. It infuses planets with optimism, "
-        "philosophical inquiry, and a love of expansion and adventure. There is a natural inclination toward "
-        "higher learning, spiritual exploration, and broad life experience. Planets placed here are generous, "
-        "idealistic, and freedom-loving, driven by a sincere quest for meaning, truth, and wisdom across diverse traditions."
+        "Dhanu (Sagittarius) is a mutable fire sign ruled by Jupiter. It carries optimism, philosophical inquiry, "
+        "and a love of expansion and adventure. There is a natural inclination toward higher learning, spiritual "
+        "exploration, and broad life experience. This sign is generous, idealistic, and freedom-loving, driven by "
+        "a sincere quest for meaning, truth, and wisdom across diverse traditions."
     ),
     "Makara": (
         "Makara (Capricorn) is a cardinal earth sign ruled by Saturn. It brings discipline, ambition, patience, "
-        "and a strong sense of duty and responsibility. Planets placed here are serious, goal-oriented, and "
-        "willing to work steadily toward long-term achievement. There is a karmic quality to this sign — rewards "
-        "come through consistent effort and integrity. Professional recognition and status are often significant life themes."
+        "and a strong sense of duty and responsibility. There is a karmic quality to this sign — rewards come "
+        "through consistent effort and integrity. Professional recognition and status are often significant "
+        "life themes for those with placements here."
     ),
     "Kumbha": (
         "Kumbha (Aquarius) is a fixed air sign co-ruled by Saturn and Rahu. It imparts originality, humanitarian "
-        "values, and a progressive, future-oriented perspective. Planets placed here are unconventional, independent, "
-        "and drawn to collective well-being and intellectual innovation. There is a natural detachment that enables "
-        "reform and original thinking. The individual is often ahead of their time, drawn to causes that serve the broader community."
+        "values, and a progressive, future-oriented perspective. There is a natural detachment that enables reform "
+        "and original thinking. This sign is unconventional and independent, drawn to collective well-being and "
+        "intellectual innovation, often ahead of its time."
     ),
     "Meena": (
         "Meena (Pisces) is a mutable water sign co-ruled by Jupiter and Ketu. It brings spiritual sensitivity, "
-        "compassion, imagination, and a deep connection to the unseen dimensions of life. Planets placed here are "
-        "empathic, intuitive, and reflective, with a natural openness to divine inspiration and selfless giving. "
-        "There is a longing for transcendence and inner peace that gently shapes the individual's entire outlook on life."
+        "compassion, imagination, and a deep connection to the unseen dimensions of life. There is a natural "
+        "openness to divine inspiration and selfless giving. A longing for transcendence and inner peace gently "
+        "shapes the outlook of those with influences in this sign."
     ),
 }
 
@@ -493,6 +490,11 @@ def interpret_planets(result):
             planet_line(planet, pos),
             f"{planet} signifies {PLANET_MEANINGS.get(planet)}.",
             RASHI_DESCRIPTION.get(pos['rashi'], f"The sign {pos['rashi']} adds a unique quality to {planet}'s expression."),
+            (
+                f"{planet}'s significations are expressed through {pos['rashi']}'s "
+                f"{RASHI_NATURE.get(pos['rashi'], 'distinctive')} quality, shaping the way "
+                f"its energy manifests in this placement."
+            ),
         ]
         if house_specific:
             paragraphs.append(house_specific)
@@ -685,28 +687,85 @@ def interpret_mahadashas(result):
     }
 
 
+CAREER_PLANET_THEMES = {
+    "Sun":     "leadership, government roles, administration, and positions of authority",
+    "Moon":    "public-facing roles, hospitality, caregiving, and fields connected to the masses",
+    "Mars":    "engineering, military, sports, surgery, real estate, and competitive fields",
+    "Mercury": "communication, business, writing, technology, teaching, and analytical work",
+    "Jupiter": "education, law, consulting, finance, counselling, and advisory roles",
+    "Venus":   "arts, beauty, luxury, entertainment, diplomacy, and creative industries",
+    "Saturn":  "structured professions, service sectors, law, discipline-based fields, and long-term careers",
+    "Rahu":    "foreign industries, technology, media, unconventional careers, and mass-scale pursuits",
+    "Ketu":    "research, healing, spiritual vocations, and behind-the-scenes technical work",
+    "Lagna":   "a strong personal drive that shapes professional direction",
+}
+
+HOUSE_CAREER_ROLE = {
+    2:  "supporting income, financial stability, and the accumulation of professional resources",
+    6:  "bringing discipline, competition, and the ability to overcome workplace challenges",
+    10: "directly shaping career, public status, authority, and professional recognition",
+    11: "generating gains, income, and the fulfillment of professional ambitions",
+}
+
+SPIRITUAL_HOUSE_THEMES = {
+    5:  "the 5th house of mantra, purva punya (past-life merit), and devotional creativity",
+    8:  "the 8th house of occult sciences, hidden wisdom, and inner transformation",
+    9:  "the 9th house of dharma, higher knowledge, guru blessings, and spiritual fortune",
+    12: "the 12th house of moksha, surrender, retreat, and liberation from material attachment",
+}
+
+SPIRITUAL_PLANET_THEMES = {
+    "Sun":     "the soul's search for higher purpose, dharmic identity, and connection to divine light",
+    "Moon":    "emotional devotion, intuitive spiritual sensitivity, and inner peace through surrender",
+    "Mars":    "courageous spiritual effort, disciplined practice, and the fire of inner transformation",
+    "Mercury": "the intellectual pursuit of wisdom, study of sacred texts, and analytical spirituality",
+    "Jupiter": "grace, dharmic guidance, guru blessings, and the expansion of spiritual knowledge",
+    "Venus":   "devotional love, bhakti, artistic worship, and the beauty of spiritual expression",
+    "Saturn":  "disciplined sadhana, karmic purification, and the patient unfolding of spiritual maturity",
+    "Rahu":    "unconventional spiritual seeking, deep questioning of tradition, and karmic spiritual intensity",
+    "Ketu":    "natural spiritual detachment, past-life wisdom, and a strong inclination toward inner liberation",
+}
+
+
 def interpret_career(result):
     d1 = get_chart(result)
-    career_planets = []
-
-    for planet, pos in d1.items():
-        if pos["house"] in [2, 6, 10, 11]:
-            career_planets.append((planet, pos))
 
     paragraphs = [
-        "Career is mainly studied from the 10th house, along with the 2nd house of income, 6th house of service and 11th house of gains."
+        "In Vedic astrology, career is primarily studied through the 10th house of profession and public life, "
+        "supported by the 2nd house of income and accumulated resources, the 6th house of service and discipline, "
+        "and the 11th house of gains and the fulfillment of ambitions.",
     ]
 
-    if career_planets:
-        for planet, pos in career_planets:
+    tenth_planets = [p for p, pos in d1.items() if pos["house"] == 10 and p != "Lagna"]
+    if tenth_planets:
+        paragraphs.append(
+            f"The 10th house — the primary house of career — contains: {', '.join(tenth_planets)}. "
+            "This gives a strong direct influence on professional identity and public recognition."
+        )
+        for planet in tenth_planets:
+            pos = d1[planet]
+            theme = CAREER_PLANET_THEMES.get(planet, "a unique professional influence")
             paragraphs.append(
-                f"{planet} influences career/income matters by being placed in house {pos['house']} "
-                f"({HOUSE_MEANINGS[pos['house']]})."
+                f"{planet} in the 10th house indicates a natural affinity toward {theme}. "
+                f"Placed in {pos['rashi']}, it colours professional expression with a "
+                f"{RASHI_NATURE.get(pos['rashi'], 'distinctive')} quality."
             )
     else:
         paragraphs.append(
-            "There are no major planets directly in the 2nd, 6th, 10th or 11th houses. Career interpretation should focus more on house lords and dashas."
+            "No major planet is directly placed in the 10th house. Career direction will be shaped "
+            "primarily by the 10th lord's placement, active dasha periods, and supporting career houses."
         )
+
+    other_career = [(p, pos) for p, pos in d1.items() if pos["house"] in [2, 6, 11] and p != "Lagna"]
+    if other_career:
+        paragraphs.append("Additional planetary influences on career and income:")
+        for planet, pos in other_career:
+            theme = CAREER_PLANET_THEMES.get(planet, "a professional influence")
+            role = HOUSE_CAREER_ROLE.get(pos["house"], "influencing career matters")
+            paragraphs.append(
+                f"{planet} in house {pos['house']} ({pos['rashi']}) contributes by {role}. "
+                f"Its significations of {theme} become active in this domain."
+            )
 
     return {
         "title": "Career and Work Direction",
@@ -719,33 +778,67 @@ def interpret_relationships(result):
     d9 = get_chart(result, "d9_navamsa_chart")
 
     paragraphs = [
-        "Marriage and relationships are primarily studied from the 7th house, Venus, Jupiter and the D9 Navamsa chart."
+        "In Vedic astrology, marriage and relationships are studied through the 7th house of partnerships, "
+        "Venus as the natural significator of love and harmony, Jupiter as the significator of the spouse "
+        "(especially significant for women), and the D9 Navamsa chart which reveals the deeper dimensions "
+        "of relationship potential and inner compatibility.",
     ]
 
-    seventh_planets = [
-        planet for planet, pos in d1.items()
-        if pos["house"] == 7
-    ]
-
+    seventh_planets = [p for p, pos in d1.items() if pos["house"] == 7]
     if seventh_planets:
         paragraphs.append(
-            f"The 7th house contains: {', '.join(seventh_planets)}. This directly influences partnership and marriage themes."
+            f"The 7th house contains: {', '.join(seventh_planets)}. "
+            "Planets placed here directly colour the nature of partnerships, the qualities of the spouse, "
+            "and the overall dynamic of committed relationships."
         )
+        for planet in seventh_planets:
+            pos = d1[planet]
+            house_specific = PLANET_IN_HOUSE.get(planet, {}).get(7)
+            if house_specific:
+                paragraphs.append(house_specific)
+            else:
+                paragraphs.append(
+                    f"{planet} in the 7th house brings its significations of {PLANET_MEANINGS.get(planet, '')} "
+                    f"into the domain of partnerships and marriage."
+                )
     else:
         paragraphs.append(
-            "The 7th house has no major planet directly placed in it. Relationship results depend more on the 7th lord, Venus/Jupiter and dasha timing."
+            "The 7th house has no major planet directly placed in it. Relationship themes will be shaped "
+            "by the 7th lord's placement, Venus, Jupiter, and the timing of relevant dasha periods."
         )
 
     if "Venus" in d1:
         v = d1["Venus"]
         paragraphs.append(
-            f"Venus is in {v['rashi']} house {v['house']}, showing relationship style, comforts, attraction and harmony themes."
+            f"Venus — the natural karaka of love, beauty, and harmony — is placed in {v['rashi']} "
+            f"in house {v['house']}. This shapes the individual's relationship style, sense of attraction, "
+            f"and the qualities they seek in a partner. The {RASHI_NATURE.get(v['rashi'], 'distinctive')} "
+            f"nature of {v['rashi']} colours how Venus expresses love and partnership in this chart."
+        )
+
+    if "Jupiter" in d1:
+        ju = d1["Jupiter"]
+        paragraphs.append(
+            f"Jupiter — the significator of the spouse, wisdom, and dharmic bonds — is placed in "
+            f"{ju['rashi']} in house {ju['house']}. Jupiter's strength and placement influence the "
+            f"quality of marital blessings, the character of the spouse, and the dharmic foundation "
+            f"of long-term partnerships."
         )
 
     if "Venus" in d9:
         v9 = d9["Venus"]
         paragraphs.append(
-            f"In D9, Venus is in {v9['rashi']} house {v9['house']}, adding deeper relationship and marriage maturity indicators."
+            f"In the D9 Navamsa chart, Venus falls in {v9['rashi']} (house {v9['house']}). "
+            f"This reveals the deeper maturity of relationship energy — the inner values, emotional "
+            f"readiness, and karmic themes that emerge within committed partnerships over time."
+        )
+
+    if "Jupiter" in d9:
+        ju9 = d9["Jupiter"]
+        paragraphs.append(
+            f"In D9, Jupiter falls in {ju9['rashi']} (house {ju9['house']}), reflecting the dharmic "
+            f"quality of the marital bond and the depth of wisdom and grace that the individual brings "
+            f"to their closest relationships."
         )
 
     return {
@@ -757,20 +850,42 @@ def interpret_relationships(result):
 def interpret_spirituality(result):
     d1 = get_chart(result)
 
-    spiritual_planets = []
-    for planet, pos in d1.items():
-        if pos["house"] in [5, 8, 9, 12] or planet in ["Jupiter", "Ketu"]:
-            spiritual_planets.append((planet, pos))
-
     paragraphs = [
-        "Spiritual tendencies are studied from the 5th house of mantra, 8th house of occult depth, 9th house of dharma and 12th house of moksha."
+        "Spiritual tendencies in a chart are revealed through the 5th house of mantra and past-life merit, "
+        "the 8th house of occult depth and inner transformation, the 9th house of dharma and higher wisdom, "
+        "and the 12th house of moksha and spiritual surrender. Jupiter and Ketu are the primary natural "
+        "significators of spiritual growth and inner liberation.",
     ]
 
-    for planet, pos in spiritual_planets:
+    seen = set()
+    spiritual_planets = []
+    for planet, pos in d1.items():
+        if planet in seen:
+            continue
+        if pos["house"] in [5, 8, 9, 12] or planet in ["Jupiter", "Ketu"]:
+            spiritual_planets.append((planet, pos))
+            seen.add(planet)
+
+    if not spiritual_planets:
         paragraphs.append(
-            f"{planet} connects with spiritual themes through house {pos['house']} or its natural significations. "
-            f"This may influence {HOUSE_MEANINGS.get(pos['house'])}."
+            "No major planets are directly placed in the primary spiritual houses. Spiritual inclinations "
+            "will emerge more through dasha periods and the natural significations of Jupiter and Ketu."
         )
+    else:
+        for planet, pos in spiritual_planets:
+            house = pos["house"]
+            planet_theme = SPIRITUAL_PLANET_THEMES.get(planet, "a subtle spiritual quality")
+            if house in SPIRITUAL_HOUSE_THEMES:
+                house_context = SPIRITUAL_HOUSE_THEMES[house]
+                paragraphs.append(
+                    f"{planet} is placed in {house_context}. This deepens the individual's connection to "
+                    f"{planet_theme}, bringing these themes into direct focus within the life journey."
+                )
+            else:
+                paragraphs.append(
+                    f"{planet} carries its spiritual significations of {planet_theme} through its natural "
+                    f"role in the chart, regardless of house placement."
+                )
 
     return {
         "title": "Spiritual and Dharma Indications",
