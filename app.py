@@ -10,7 +10,7 @@ from pdf_report import build_kundli_pdf
 
 import httpx
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi import BackgroundTasks
@@ -94,6 +94,30 @@ class KundliRequest(BaseModel):
         if len(v) > 200:
             raise ValueError("Place name is too long")
         return v
+
+
+@app.get("/robots.txt", response_class=PlainTextResponse)
+async def robots():
+    return (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "Sitemap: https://www.astrojyotisha.com/sitemap.xml\n"
+    )
+
+
+@app.get("/sitemap.xml")
+async def sitemap():
+    content = (
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+        "<url>"
+        "<loc>https://www.astrojyotisha.com/</loc>"
+        "<changefreq>monthly</changefreq>"
+        "<priority>1.0</priority>"
+        "</url>"
+        "</urlset>"
+    )
+    return HTMLResponse(content=content, media_type="application/xml")
 
 
 @app.get("/", response_class=HTMLResponse)
