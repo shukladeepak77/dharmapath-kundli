@@ -548,22 +548,40 @@ def find_conjunctions(result):
     }
 
 
+PLANET_ASPECT_QUALITY = {
+    "Sun":     "illuminates with authority, clarity of purpose, and dharmic light",
+    "Moon":    "nurtures with emotional sensitivity, empathy, and intuitive awareness",
+    "Mars":    "energises with drive, assertive force, and competitive intensity",
+    "Mercury": "sharpens with analytical insight, communicative skill, and intellectual clarity",
+    "Jupiter": "blesses with wisdom, grace, optimism, and expansive growth",
+    "Venus":   "enriches with harmony, beauty, refinement, and relational warmth",
+    "Saturn":  "disciplines with karmic lessons, structure, patience, and enduring effort",
+    "Rahu":    "amplifies with unconventional desire, restless ambition, and karmic intensity",
+    "Ketu":    "spiritualises with detachment, past-life wisdom, and subtle inner liberation",
+}
+
+ASPECT_LABEL = {
+    3:  "3rd (special)",
+    4:  "4th (special)",
+    5:  "5th (special)",
+    7:  "7th (full opposite)",
+    8:  "8th (special)",
+    9:  "9th (special)",
+    10: "10th (special)",
+}
+
+
 def find_special_aspects(result):
     d1 = get_chart(result)
     paragraphs = [
         "In Vedic astrology, drishti (aspect) represents the directional influence of a planet. "
-        "A planet not only impacts the house it occupies, but also projects its energy onto specific "
-        "houses through aspects.",
-        "These aspects modify the results of the aspected house by introducing the nature of the "
-        "influencing planet — whether it brings growth, discipline, intensity, confusion or detachment.",
-        "Understanding drishti helps reveal hidden connections between different areas of life and "
-        "shows how one domain influences another.",
-        "General Drishti Rules: Every planet aspects the 7th house from its position (full opposite aspect). "
-        "In addition, Mars casts special aspects on the 4th and 8th houses from its placement. "
-        "Jupiter aspects the 5th and 9th houses from its placement. "
-        "Saturn aspects the 3rd and 10th houses from its placement. "
-        "Rahu and Ketu, like Jupiter, aspect the 5th and 9th houses from their placement. "
-        "Sun, Moon, Mercury and Venus cast only the standard 7th house aspect.",
+        "A planet not only impacts the house it occupies but also projects its energy onto specific "
+        "houses, modifying their results by introducing its own nature — whether that brings growth, "
+        "discipline, intensity, clarity, or detachment.",
+        "Every planet casts a full 7th house aspect — a direct, opposite-house influence. "
+        "Beyond this, Mars holds special aspects on the 4th and 8th houses, Jupiter on the 5th and 9th, "
+        "Saturn on the 3rd and 10th, and Rahu and Ketu on the 5th and 9th. "
+        "Sun, Moon, Mercury, and Venus cast only the standard 7th house aspect.",
     ]
 
     aspect_rules = {
@@ -582,13 +600,30 @@ def find_special_aspects(result):
         if planet not in d1:
             continue
 
-        from_house = d1[planet]["house"]
+        pos = d1[planet]
+        from_house = pos["house"]
+        rashi = pos["rashi"]
+        quality = PLANET_ASPECT_QUALITY.get(planet, "projects its energy")
 
-        for aspect in aspects:
-            target_house = ((from_house + aspect - 2) % 12) + 1
+        if len(aspects) == 1:
+            target = ((from_house + aspects[0] - 2) % 12) + 1
+            label = ASPECT_LABEL.get(aspects[0], f"{aspects[0]}th")
             paragraphs.append(
-                f"{planet} from house {from_house} aspects house {target_house}. "
-                f"This influences matters of {HOUSE_MEANINGS.get(target_house)}."
+                f"{planet}, placed in {rashi} (house {from_house}), casts its {label} aspect on house {target}. "
+                f"It {quality}, bringing these qualities into the domain of {HOUSE_MEANINGS.get(target)}."
+            )
+        else:
+            aspect_parts = []
+            for asp in aspects:
+                target = ((from_house + asp - 2) % 12) + 1
+                label = ASPECT_LABEL.get(asp, f"{asp}th")
+                aspect_parts.append(
+                    f"its {label} aspect on house {target} ({HOUSE_MEANINGS.get(target)})"
+                )
+            aspects_text = "; ".join(aspect_parts)
+            paragraphs.append(
+                f"{planet}, placed in {rashi} (house {from_house}), casts multiple aspects from this position — {aspects_text}. "
+                f"Through each of these, {planet} {quality}, weaving its influence across these areas of life."
             )
 
     return {
