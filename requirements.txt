@@ -6,3 +6,4 @@ httpx
 pyswisseph
 reportlab
 pillow
+timezonefinder

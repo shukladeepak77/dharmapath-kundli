@@ -2,6 +2,7 @@ import logging
 import os
 import tempfile
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from interpretation_engine import generate_interpretation_report
 from chart_generator import generate_kundli_chart
@@ -36,7 +37,8 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-GEONAMES_USERNAME = os.getenv("GEONAMES_USERNAME", "demo")
+from timezonefinder import TimezoneFinder
+_tf = TimezoneFinder()
 
 
 class KundliRequest(BaseModel):
@@ -99,7 +101,7 @@ async def home(request: Request):
     return templates.TemplateResponse(
         request,
         "index.html",
-        {"geonames_username": GEONAMES_USERNAME},
+        {},
     )
 
 
@@ -109,38 +111,52 @@ async def location_search(request: Request, q: str):
     if not q or len(q.strip()) < 2:
         return {"results": []}
 
-    url = "http://api.geonames.org/searchJSON"
+    url = "https://nominatim.openstreetmap.org/search"
     params = {
         "q": q,
-        "maxRows": 1,
-        "username": GEONAMES_USERNAME,
-        "style": "FULL",
+        "format": "json",
+        "limit": 1,
+        "addressdetails": 1,
     }
+    headers = {"User-Agent": "DharmaPathKundli/1.0 seva@dharmpathusa.com"}
 
     async with httpx.AsyncClient(timeout=10) as client:
-        r = await client.get(url, params=params)
+        r = await client.get(url, params=params, headers=headers)
 
     if r.status_code != 200:
         raise HTTPException(status_code=502, detail="Location service failed")
 
-    data = r.json()
-    results = []
-    for item in data.get("geonames", []):
-        timezone_info = item.get("timezone") or {}
-        results.append({
-            "name": item.get("name"),
-            "countryName": item.get("countryName"),
-            "adminName1": item.get("adminName1"),
-            "lat": float(item.get("lat")),
-            "lng": float(item.get("lng")),
-            "timezoneId": timezone_info.get("timeZoneId"),
-            "gmtOffset": timezone_info.get("gmtOffset"),
-            "display": ", ".join(
-                x for x in [item.get("name"), item.get("adminName1"), item.get("countryName")] if x
-            ),
-        })
+    items = r.json()
+    if not items:
+        return {"results": []}
 
-    return {"results": results}
+    item = items[0]
+    lat = float(item["lat"])
+    lng = float(item["lon"])
+    address = item.get("address", {})
+
+    city = address.get("city") or address.get("town") or address.get("village") or address.get("county") or ""
+    state = address.get("state", "")
+    country = address.get("country", "")
+    display = ", ".join(x for x in [city, state, country] if x) or item.get("display_name", "")
+
+    timezone_id = _tf.timezone_at(lng=lng, lat=lat)
+    gmt_offset = None
+    if timezone_id:
+        tz = ZoneInfo(timezone_id)
+        offset_seconds = datetime.now(tz).utcoffset().total_seconds()
+        gmt_offset = round(offset_seconds / 3600, 2)
+
+    return {"results": [{
+        "name": city,
+        "countryName": country,
+        "adminName1": state,
+        "lat": lat,
+        "lng": lng,
+        "timezoneId": timezone_id,
+        "gmtOffset": gmt_offset,
+        "display": display,
+    }]}
 
 
 @app.post("/api/generate-kundli")

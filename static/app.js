@@ -1,13 +1,7 @@
 let lastResult = null;
 let currentChart = "d1";
 
-// Set default date to today and time to 12:00
-const _today = new Date();
-const _yyyy = _today.getFullYear();
-const _mm = String(_today.getMonth() + 1).padStart(2, "0");
-const _dd = String(_today.getDate()).padStart(2, "0");
 document.addEventListener("DOMContentLoaded", () => {
-  $("birth_date").value = `2010-${_mm}-${_dd}`;
   $("birth_time").value = "12:00";
 });
 
@@ -54,8 +48,11 @@ async function searchLocation() {
 
   $("locationResults").innerHTML = `<div class="loc-item">Searching...</div>`;
 
-  const res = await fetch(`/api/location-search?q=${encodeURIComponent(q)}`);
-  const data = await res.json();
+  let data = {};
+  try {
+    const res = await fetch(`/api/location-search?q=${encodeURIComponent(q)}`);
+    data = await res.json();
+  } catch (_) {}
 
   if (!data.results || data.results.length === 0) {
     $("locationResults").innerHTML = `<div class="loc-item">No locations found. Enter latitude/longitude manually.</div>`;
