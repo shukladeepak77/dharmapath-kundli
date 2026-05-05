@@ -135,12 +135,15 @@ function positionsTable(positions) {
       <tbody>
         ${order.map(p => {
           const x = positions[p];
+          const color = PLANET_COLORS[p === "Lagna" ? "La" : p.slice(0,2)] || "#78716c";
+          const dot = `<span class="planet-dot" style="background:${color}"></span>`;
+          const retro = x.retrograde && !["Lagna","Rahu","Ketu"].includes(p) ? " ℞" : "";
           return `<tr>
-            <td><strong>${p}${x.retrograde && !["Lagna","Rahu","Ketu"].includes(p) ? " ℞" : ""}</strong></td>
-            <td>${x.rashi}</td>
+            <td><strong>${dot}${esc(p)}${retro}</strong></td>
+            <td>${esc(x.rashi)}</td>
             <td>${degreeText(x.degree_in_rashi)}</td>
             <td>${x.house}</td>
-            <td>${x.nakshatra}</td>
+            <td>${esc(x.nakshatra)}</td>
             <td>${x.pada}</td>
           </tr>`;
         }).join("")}
@@ -159,9 +162,16 @@ function renderDashas(result) {
     <table class="table">
       <thead><tr><th>Lord</th><th>Start</th><th>End</th><th>Years</th></tr></thead>
       <tbody>
-        ${result.vimshottari_mahadasha.map(d => `
-          <tr><td><strong>${d.lord}</strong></td><td>${d.start}</td><td>${d.end}</td><td>${d.years}</td></tr>
-        `).join("")}
+        ${result.vimshottari_mahadasha.map(d => {
+          const color = PLANET_COLORS[d.lord.slice(0,2)] || "#78716c";
+          const dot = `<span class="planet-dot" style="background:${color}"></span>`;
+          return `<tr>
+            <td><strong>${dot}${esc(d.lord)}</strong></td>
+            <td>${esc(d.start)}</td>
+            <td>${esc(d.end)}</td>
+            <td>${d.years}</td>
+          </tr>`;
+        }).join("")}
       </tbody>
     </table>
   `;
@@ -173,6 +183,11 @@ function renderAll(result) {
   renderChart(chart);
   renderPositions(result);
   renderDashas(result);
+  document.querySelectorAll(".results .card, .results .chart-tabs").forEach(el => {
+    el.classList.remove("fade-in");
+    void el.offsetWidth;
+    el.classList.add("fade-in");
+  });
 }
 
 async function generateKundli(event) {
@@ -187,7 +202,12 @@ async function generateKundli(event) {
     timezone_offset_hours: $("timezone").value,
   };
 
-  $("summary").innerHTML = `<h2>Calculating...</h2><p>Please wait.</p>`;
+  $("summary").innerHTML = `
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p class="loading-text">Calculating your Kundli…</p>
+      <p class="loading-sub">Reading planetary positions</p>
+    </div>`;
 
   const res = await fetch("/api/generate-kundli", {
     method: "POST",
@@ -197,7 +217,11 @@ async function generateKundli(event) {
 
   if (!res.ok) {
     const err = await res.json();
-    $("summary").innerHTML = `<h2>Error</h2><p>${esc(err.detail || "Failed to generate kundli.")}</p>`;
+    $("summary").innerHTML = `
+      <div style="padding:20px;text-align:center">
+        <p style="color:#9a3412;font-weight:700;font-size:16px;margin:0 0 8px">Unable to generate Kundli</p>
+        <p style="color:#78716c;font-size:14px;margin:0">${esc(err.detail || "Please check all fields and try again.")}</p>
+      </div>`;
     return;
   }
 

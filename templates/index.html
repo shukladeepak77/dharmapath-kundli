@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/static/style.css?v=12" />
+  <link rel="stylesheet" href="/static/style.css?v=14" />
 </head>
 <body>
   <div class="page">
@@ -20,7 +20,7 @@
       </div>
       <div class="hero-oneliner">
         <p>Vedic Birth Chart &nbsp;·&nbsp; Nakshatras &nbsp;·&nbsp; Planetary Dashas &nbsp;·&nbsp; Jyotish Insights</p>
-        <p class="hero-oneliner-sub">For spiritual exploration &amp; inner awareness</p>
+        <p class="hero-oneliner-sub">For spiritual exploration<br>&amp; self-reflection</p>
       </div>
       <div class="hero-right">
         <img src="/static/AstroJyotishalogo.png?v=1" alt="AstroJyotisha Logo" class="hero-logo" />
@@ -75,7 +75,19 @@
       </section>
 
       <section class="results">
-        <div class="card summary-card" id="summary"></div>
+        <div class="card summary-card" id="summary">
+          <div class="welcome-state" id="welcomeState">
+            <div class="welcome-om">ॐ</div>
+            <h2 class="welcome-title">Jyotish Kundli</h2>
+            <div class="welcome-divider"></div>
+            <p class="welcome-text">
+              Enter your birth details on the left and click <strong>Generate Kundli</strong>
+              to receive your personalised Vedic birth chart, planetary positions,
+              Vimshottari Dashas and Jyotish insights.
+            </p>
+            <p class="welcome-sub">Ancient Wisdom · Modern Guidance</p>
+          </div>
+        </div>
 
         <div class="chart-tabs">
           <button class="tab active" data-chart="d1">D1 Rashi</button>
@@ -99,6 +111,6 @@
     </main>
   </div>
 
-  <script src="/static/app.js?v=14"></script>
+  <script src="/static/app.js?v=15"></script>
 </body>
 </html>
