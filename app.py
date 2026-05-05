@@ -74,9 +74,13 @@ class KundliRequest(BaseModel):
     @classmethod
     def validate_date(cls, v):
         try:
-            datetime.strptime(v, "%Y-%m-%d")
+            parsed = datetime.strptime(v, "%Y-%m-%d")
         except ValueError:
             raise ValueError("Invalid date format. Use YYYY-MM-DD")
+        if parsed.date() > datetime.today().date():
+            raise ValueError("Birth date cannot be in the future")
+        if parsed.year < 1900:
+            raise ValueError("Birth date must be after 1900")
         return v
 
     @field_validator("birth_time")
@@ -125,7 +129,7 @@ async def home(request: Request):
     return templates.TemplateResponse(
         request,
         "index.html",
-        {},
+        {"today": datetime.today().strftime("%Y-%m-%d")},
     )
 
 
