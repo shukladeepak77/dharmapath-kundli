@@ -249,7 +249,7 @@ async function downloadJson() {
     timezone_offset_hours: $("timezone").value,
   };
 
-  btn.textContent = "Generating…";
+  btn.textContent = "Kundli Report…";
   btn.disabled = true;
 
   try {
@@ -274,7 +274,7 @@ async function downloadJson() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   } finally {
-    btn.textContent = "Download Kundli";
+    btn.textContent = "Kundli Report";
     btn.disabled = false;
   }
 }
