@@ -103,29 +103,15 @@
           </div>
 
           <label>Birth Location
-            <div class="search-row">
-              <input name="location" id="location" placeholder="Enter location and press Search" />
-              <button type="button" id="searchLocation">Search</button>
-            </div>
+            <input name="location" id="location" placeholder="Enter city, e.g. New Delhi, India" />
           </label>
 
           <div id="locationResults" class="location-results"></div>
 
-          <div class="grid-3">
-            <label>Latitude
-              <input name="latitude" id="latitude" placeholder="e.g. 28.6139" />
-            </label>
-            <label>Longitude
-              <input name="longitude" id="longitude" placeholder="e.g. 77.2090" />
-            </label>
-            <label>Timezone Offset
-              <input name="timezone" id="timezone" placeholder="e.g. 5.5" />
-            </label>
-          </div>
-
-          <label>Selected Place
-            <input name="place" id="place" placeholder="Auto-filled after location search" />
-          </label>
+          <input type="hidden" name="latitude" id="latitude" />
+          <input type="hidden" name="longitude" id="longitude" />
+          <input type="hidden" name="timezone" id="timezone" />
+          <input type="hidden" name="place" id="place" />
 
           <div class="actions">
             <button type="submit" class="primary">Generate Kundli</button>

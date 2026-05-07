@@ -279,7 +279,6 @@ async function downloadJson() {
   }
 }
 
-$("searchLocation").addEventListener("click", searchLocation);
 $("kundliForm").addEventListener("submit", generateKundli);
 $("downloadJson").addEventListener("click", downloadJson);
 
