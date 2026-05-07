@@ -46,6 +46,79 @@ function timeRange(w) {
   return `<span class="time-range">${esc(w.start)} – ${esc(w.end)}</span>`;
 }
 
+function renderTithiCell(tithis) {
+  if (tithis.length === 1) {
+    const t = tithis[0];
+    return `
+      <div class="pan-element">
+        <div class="pan-element-label">Tithi</div>
+        <div class="pan-element-value">${esc(t.name)}</div>
+        <div class="pan-element-sub">${esc(t.paksha)} Paksha · ${t.number}</div>
+      </div>`;
+  }
+  // Two tithis — show transition
+  const t1 = tithis[0], t2 = tithis[1];
+  return `
+    <div class="pan-element pan-element-transition">
+      <div class="pan-element-label">Tithi</div>
+      <div class="pan-element-value">${esc(t1.name)}</div>
+      <div class="pan-element-sub">${esc(t1.paksha)} Paksha · ${t1.number}</div>
+      <div class="pan-transition-tag">upto ${esc(t1.upto)}</div>
+      <div class="pan-transition-divider"></div>
+      <div class="pan-element-value">${esc(t2.name)}</div>
+      <div class="pan-element-sub">${esc(t2.paksha)} Paksha · ${t2.number}</div>
+      <div class="pan-transition-tag">from ${esc(t2.from)}</div>
+    </div>`;
+}
+
+function renderNakCell(nakshatras) {
+  if (nakshatras.length === 1) {
+    const n = nakshatras[0];
+    return `
+      <div class="pan-element">
+        <div class="pan-element-label">Nakshatra</div>
+        <div class="pan-element-value">${esc(n.name)}</div>
+        <div class="pan-element-sub">Pada ${n.pada} · Lord: ${esc(n.lord)}</div>
+      </div>`;
+  }
+  const n1 = nakshatras[0], n2 = nakshatras[1];
+  return `
+    <div class="pan-element pan-element-transition">
+      <div class="pan-element-label">Nakshatra</div>
+      <div class="pan-element-value">${esc(n1.name)}</div>
+      <div class="pan-element-sub">Pada ${n1.pada} · Lord: ${esc(n1.lord)}</div>
+      <div class="pan-transition-tag">upto ${esc(n1.upto)}</div>
+      <div class="pan-transition-divider"></div>
+      <div class="pan-element-value">${esc(n2.name)}</div>
+      <div class="pan-element-sub">Pada ${n2.pada} · Lord: ${esc(n2.lord)}</div>
+      <div class="pan-transition-tag">from ${esc(n2.from)}</div>
+    </div>`;
+}
+
+function renderKaranaCell(karanas) {
+  if (karanas.length === 1) {
+    return `
+      <div class="pan-element">
+        <div class="pan-element-label">Karana</div>
+        <div class="pan-element-value">${esc(karanas[0].name)}</div>
+        <div class="pan-element-sub">&nbsp;</div>
+      </div>`;
+  }
+  // Multiple karanas — show each with timing, separated by dashed dividers
+  const rows = karanas.map((k, i) => {
+    const timing = k.from
+      ? `<div class="pan-transition-tag">from ${esc(k.from)}${k.upto ? " · upto " + esc(k.upto) : ""}</div>`
+      : (k.upto ? `<div class="pan-transition-tag">upto ${esc(k.upto)}</div>` : "");
+    return (i > 0 ? '<div class="pan-transition-divider"></div>' : "") +
+      `<div class="pan-element-value">${esc(k.name)}</div>${timing}`;
+  }).join("");
+  return `
+    <div class="pan-element pan-element-transition">
+      <div class="pan-element-label">Karana</div>
+      ${rows}
+    </div>`;
+}
+
 function renderPanchang(data) {
   const p = data.panchang;
   const ina = data.inauspicious;
@@ -55,26 +128,14 @@ function renderPanchang(data) {
 
     <h3 class="pan-section-title">Pancha Anga — Five Sacred Elements</h3>
     <div class="pan-grid">
-      <div class="pan-element">
-        <div class="pan-element-label">Tithi</div>
-        <div class="pan-element-value">${esc(p.tithi.name)}</div>
-        <div class="pan-element-sub">${esc(p.tithi.paksha)} Paksha · ${p.tithi.number}</div>
-      </div>
-      <div class="pan-element">
-        <div class="pan-element-label">Nakshatra</div>
-        <div class="pan-element-value">${esc(p.nakshatra.name)}</div>
-        <div class="pan-element-sub">Pada ${p.nakshatra.pada} · Lord: ${esc(p.nakshatra.lord)}</div>
-      </div>
+      ${renderTithiCell(p.tithis)}
+      ${renderNakCell(p.nakshatras)}
       <div class="pan-element">
         <div class="pan-element-label">Yoga</div>
         <div class="pan-element-value">${esc(p.yoga.name)}</div>
         <div class="pan-element-sub">${qualityBadge(p.yoga.quality)}</div>
       </div>
-      <div class="pan-element">
-        <div class="pan-element-label">Karana</div>
-        <div class="pan-element-value">${esc(p.karana.name)}</div>
-        <div class="pan-element-sub">&nbsp;</div>
-      </div>
+      ${renderKaranaCell(p.karanas)}
       <div class="pan-element">
         <div class="pan-element-label">Vara</div>
         <div class="pan-element-value">${esc(p.vara.name)}</div>

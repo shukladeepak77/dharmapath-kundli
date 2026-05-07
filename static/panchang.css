@@ -85,6 +85,26 @@
   min-height: 18px;
 }
 
+/* Intra-day transition elements */
+.pan-element-transition {
+  border-color: rgba(180, 83, 9, 0.3);
+  background: linear-gradient(180deg, var(--soft) 0%, #fffbeb 100%);
+}
+
+.pan-transition-tag {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: #b45309;
+  margin-top: 3px;
+}
+
+.pan-transition-divider {
+  border-top: 1px dashed rgba(180,83,9,0.35);
+  margin: 8px 0 6px;
+}
+
 /* Timing cards */
 .pan-timing-grid {
   display: grid;
