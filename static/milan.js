@@ -9,7 +9,7 @@ function esc(s) {
 async function searchLocation(prefix) {
   const q = $(`${prefix}_location`).value.trim();
   const resultsEl = $(`${prefix}_locationResults`);
-  if (!q) return;
+  if (!q) return false;
   resultsEl.innerHTML = `<div class="loc-item">Searching…</div>`;
 
   let data = {};
@@ -19,8 +19,8 @@ async function searchLocation(prefix) {
   } catch (_) {}
 
   if (!data.results || data.results.length === 0) {
-    resultsEl.innerHTML = `<div class="loc-item">No locations found. Enter manually.</div>`;
-    return;
+    resultsEl.innerHTML = `<div class="loc-item">No locations found. Enter a valid city name.</div>`;
+    return false;
   }
   const loc = data.results[0];
   $(`${prefix}_latitude`).value  = loc.lat;
@@ -31,6 +31,7 @@ async function searchLocation(prefix) {
   $(`${prefix}_place`).value = loc.display;
   resultsEl.innerHTML =
     `<div class="loc-item"><strong>✓ ${esc(loc.display)}</strong> &nbsp;·&nbsp; Lat ${esc(loc.lat)}, Lng ${esc(loc.lng)}, TZ ${esc(loc.gmtOffset ?? "—")}</div>`;
+  return true;
 }
 
 function scoreCircleClass(rc) {
@@ -154,15 +155,30 @@ function renderMilan(data) {
 async function submitMilan(e) {
   e.preventDefault();
 
+  if (!$("b_latitude").value && $("b_location").value.trim()) {
+    const found = await searchLocation("b");
+    if (!found) {
+      $("milan_results").innerHTML = `<div class="card" style="padding:20px;text-align:center;color:#9a3412">Boy's birth location not found. Please enter a valid city name.</div>`;
+      return;
+    }
+  }
+  if (!$("g_latitude").value && $("g_location").value.trim()) {
+    const found = await searchLocation("g");
+    if (!found) {
+      $("milan_results").innerHTML = `<div class="card" style="padding:20px;text-align:center;color:#9a3412">Girl's birth location not found. Please enter a valid city name.</div>`;
+      return;
+    }
+  }
+
   const bTz = parseFloat($("b_timezone").value);
   const gTz = parseFloat($("g_timezone").value);
 
   if (!$("b_latitude").value || !$("b_longitude").value || isNaN(bTz)) {
-    $("milan_results").innerHTML = `<div class="card" style="padding:20px;text-align:center;color:#9a3412">Please search for the boy's birth location first.</div>`;
+    $("milan_results").innerHTML = `<div class="card" style="padding:20px;text-align:center;color:#9a3412">Please enter the boy's birth location.</div>`;
     return;
   }
   if (!$("g_latitude").value || !$("g_longitude").value || isNaN(gTz)) {
-    $("milan_results").innerHTML = `<div class="card" style="padding:20px;text-align:center;color:#9a3412">Please search for the girl's birth location first.</div>`;
+    $("milan_results").innerHTML = `<div class="card" style="padding:20px;text-align:center;color:#9a3412">Please enter the girl's birth location.</div>`;
     return;
   }
 
@@ -200,6 +216,4 @@ async function submitMilan(e) {
   }
 }
 
-$("b_search").addEventListener("click", () => searchLocation("b"));
-$("g_search").addEventListener("click", () => searchLocation("g"));
 $("milanForm").addEventListener("submit", submitMilan);

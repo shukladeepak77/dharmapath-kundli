@@ -67,26 +67,13 @@
               </label>
             </div>
             <label>Birth Location
-              <div class="search-row">
-                <input id="b_location" placeholder="Enter location and press Search" />
-                <button type="button" id="b_search">Search</button>
-              </div>
+              <input id="b_location" placeholder="Enter city, e.g. New Delhi, India" />
             </label>
             <div id="b_locationResults" class="location-results"></div>
-            <div class="grid-3">
-              <label>Latitude
-                <input id="b_latitude" placeholder="e.g. 28.6139" required />
-              </label>
-              <label>Longitude
-                <input id="b_longitude" placeholder="e.g. 77.2090" required />
-              </label>
-              <label>TZ Offset
-                <input id="b_timezone" placeholder="e.g. 5.5" required />
-              </label>
-            </div>
-            <label>Place
-              <input id="b_place" placeholder="Auto-filled after search" />
-            </label>
+            <input type="hidden" id="b_latitude" />
+            <input type="hidden" id="b_longitude" />
+            <input type="hidden" id="b_timezone" />
+            <input type="hidden" id="b_place" />
           </div>
 
           <!-- Heart divider -->
@@ -109,26 +96,13 @@
               </label>
             </div>
             <label>Birth Location
-              <div class="search-row">
-                <input id="g_location" placeholder="Enter location and press Search" />
-                <button type="button" id="g_search">Search</button>
-              </div>
+              <input id="g_location" placeholder="Enter city, e.g. Mumbai, India" />
             </label>
             <div id="g_locationResults" class="location-results"></div>
-            <div class="grid-3">
-              <label>Latitude
-                <input id="g_latitude" placeholder="e.g. 28.6139" required />
-              </label>
-              <label>Longitude
-                <input id="g_longitude" placeholder="e.g. 77.2090" required />
-              </label>
-              <label>TZ Offset
-                <input id="g_timezone" placeholder="e.g. 5.5" required />
-              </label>
-            </div>
-            <label>Place
-              <input id="g_place" placeholder="Auto-filled after search" />
-            </label>
+            <input type="hidden" id="g_latitude" />
+            <input type="hidden" id="g_longitude" />
+            <input type="hidden" id="g_timezone" />
+            <input type="hidden" id="g_place" />
           </div>
         </div>
 
@@ -152,6 +126,6 @@
     </div>
   </div>
 
-  <script src="/static/milan.js?v=1"></script>
+  <script src="/static/milan.js?v=2"></script>
 </body>
 </html>
