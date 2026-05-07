@@ -6,8 +6,23 @@ function esc(s) {
     .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
+const MONTH_NAMES = ["January","February","March","April","May","June",
+                     "July","August","September","October","November","December"];
+
 document.addEventListener("DOMContentLoaded", () => {
   $("pan_date").value = new Date().toISOString().split("T")[0];
+
+  // Populate month selector
+  const now = new Date();
+  const sel = $("cal_month");
+  MONTH_NAMES.forEach((name, i) => {
+    const opt = document.createElement("option");
+    opt.value = i + 1;
+    opt.textContent = name;
+    if (i + 1 === now.getMonth() + 1) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  $("cal_year").value = now.getFullYear();
 });
 
 async function searchLocation() {
@@ -249,3 +264,103 @@ async function submitPanchang(e) {
 
 $("pan_searchLocation").addEventListener("click", searchLocation);
 $("panchangForm").addEventListener("submit", submitPanchang);
+
+// ── Tithi Calendar ────────────────────────────────────────────────────────────
+
+function calTithiLabel(t) {
+  return t.paksha === "Shukla"
+    ? `S${t.number} ${esc(t.name)}`
+    : `K${t.number} ${esc(t.name)}`;
+}
+
+function calDayClass(tithis) {
+  const t = tithis[0];
+  if (t.name === "Purnima")   return "cal-day cal-purnima";
+  if (t.name === "Amavasya")  return "cal-day cal-amavasya";
+  if (t.paksha === "Shukla")  return "cal-day cal-shukla";
+  return "cal-day cal-krishna";
+}
+
+function renderCalendar(data) {
+  const DAY_HEADERS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+  let html = `
+    <div class="card cal-card">
+      <h3 class="cal-heading">${esc(data.month_name)} ${data.year}${data.place ? " · " + esc(data.place) : ""}</h3>
+      <div class="cal-legend">
+        <span class="cal-leg-shukla">Shukla Paksha</span>
+        <span class="cal-leg-krishna">Krishna Paksha</span>
+        <span class="cal-leg-purnima">Purnima</span>
+        <span class="cal-leg-amavasya">Amavasya</span>
+      </div>
+      <div class="cal-grid">`;
+
+  // Day-of-week headers
+  DAY_HEADERS.forEach(d => { html += `<div class="cal-hdr">${d}</div>`; });
+
+  // Empty cells before the 1st
+  const firstWeekday = data.days[0].weekday; // 0=Sun
+  for (let i = 0; i < firstWeekday; i++) {
+    html += `<div class="cal-day cal-empty"></div>`;
+  }
+
+  // Day cells
+  data.days.forEach(day => {
+    const t1 = day.tithis[0];
+    const t2 = day.tithis[1];
+    html += `<div class="${calDayClass(day.tithis)}">
+      <div class="cal-day-num">${day.day}</div>
+      <div class="cal-tithi-main">${esc(t1.name)}</div>
+      <div class="cal-tithi-sub">${esc(t1.paksha === "Shukla" ? "S" : "K")}${t1.number}${t1.upto ? " · till " + esc(t1.upto) : ""}</div>
+      ${t2 ? `<div class="cal-tithi-main cal-tithi2">${esc(t2.name)}</div><div class="cal-tithi-sub">${esc(t2.paksha === "Shukla" ? "S" : "K")}${t2.number} · from ${esc(t2.from)}</div>` : ""}
+    </div>`;
+  });
+
+  html += `</div></div>`;
+  $("cal_results").innerHTML = html;
+}
+
+async function submitCalendar(e) {
+  e.preventDefault();
+
+  const lat = parseFloat($("pan_latitude").value);
+  const lng = parseFloat($("pan_longitude").value);
+  const tz  = parseFloat($("pan_timezone").value);
+
+  if (!lat || !lng || isNaN(tz)) {
+    $("cal_results").innerHTML = `<div class="card" style="padding:20px;text-align:center;color:#9a3412">
+      Please search for a location in the form above first.</div>`;
+    return;
+  }
+
+  const payload = {
+    year:                 parseInt($("cal_year").value),
+    month:                parseInt($("cal_month").value),
+    latitude:             lat,
+    longitude:            lng,
+    timezone_offset_hours: tz,
+    place:                $("pan_place").value,
+  };
+
+  $("cal_results").innerHTML = `<div class="card" style="padding:28px;text-align:center">
+    <div class="spinner"></div>
+    <p class="loading-text">Building Tithi Calendar…</p></div>`;
+
+  try {
+    const res = await fetch("/api/panchang-month", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      $("cal_results").innerHTML = `<div class="card" style="padding:20px;text-align:center;color:#9a3412">${esc(err.detail || "Error generating calendar.")}</div>`;
+      return;
+    }
+    renderCalendar(await res.json());
+  } catch (_) {
+    $("cal_results").innerHTML = `<div class="card" style="padding:20px;text-align:center;color:#9a3412">An error occurred. Please try again.</div>`;
+  }
+}
+
+$("calForm").addEventListener("submit", submitCalendar);

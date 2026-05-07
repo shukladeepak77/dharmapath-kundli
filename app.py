@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 from interpretation_engine import generate_interpretation_report
 from chart_generator import generate_kundli_chart
 from pdf_report import build_kundli_pdf
-from panchang_engine import calculate_panchang
+from panchang_engine import calculate_panchang, calculate_month_panchang
 
 import httpx
 from fastapi import FastAPI, HTTPException, Request
@@ -310,4 +310,51 @@ async def panchang_api(request: Request, payload: PanchangRequest):
         return result
     except Exception as exc:
         logger.exception("Error in panchang_api")
+        raise HTTPException(status_code=400, detail=str(exc))
+
+
+class MonthPanchangRequest(BaseModel):
+    year: int
+    month: int
+    latitude: float
+    longitude: float
+    timezone_offset_hours: float
+    place: str = ""
+
+    @field_validator("month")
+    @classmethod
+    def val_month(cls, v):
+        if not (1 <= v <= 12):
+            raise ValueError("Month must be 1–12")
+        return v
+
+    @field_validator("year")
+    @classmethod
+    def val_year(cls, v):
+        if not (1900 <= v <= 2100):
+            raise ValueError("Year must be between 1900 and 2100")
+        return v
+
+
+@app.post("/api/panchang-month")
+@limiter.limit("10/minute")
+async def panchang_month_api(request: Request, payload: MonthPanchangRequest):
+    import calendar
+    try:
+        days = calculate_month_panchang(
+            year=payload.year,
+            month=payload.month,
+            lat=payload.latitude,
+            lng=payload.longitude,
+            tz_offset=payload.timezone_offset_hours,
+        )
+        return {
+            "year":       payload.year,
+            "month":      payload.month,
+            "month_name": calendar.month_name[payload.month],
+            "place":      payload.place,
+            "days":       days,
+        }
+    except Exception as exc:
+        logger.exception("Error in panchang_month_api")
         raise HTTPException(status_code=400, detail=str(exc))

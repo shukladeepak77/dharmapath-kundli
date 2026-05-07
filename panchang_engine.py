@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import calendar as _cal
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -404,3 +405,85 @@ def calculate_panchang(
             "night": night_cho,
         },
     }
+
+
+def calculate_month_panchang(
+    year: int,
+    month: int,
+    lat: float,
+    lng: float,
+    tz_offset: float,
+) -> List[Dict]:
+    """Return Tithi data for every day of a calendar month (lean, no Choghadiya)."""
+    if EPHE_DIR.exists():
+        swe.set_ephe_path(str(EPHE_DIR))
+    else:
+        swe.set_ephe_path(str(BASE_DIR))
+    swe.set_sid_mode(swe.SIDM_LAHIRI)
+
+    flags     = swe.FLG_SWIEPH | swe.FLG_SIDEREAL
+    geopos    = (lng, lat, 0.0)
+    rsmi_rise = swe.CALC_RISE | swe.BIT_DISC_CENTER
+    rsmi_set  = swe.CALC_SET  | swe.BIT_DISC_CENTER
+
+    num_days = _cal.monthrange(year, month)[1]
+    result: List[Dict] = []
+
+    for day in range(1, num_days + 1):
+        date     = datetime(year, month, day)
+        date_str = date.strftime("%Y-%m-%d")
+
+        utc_noon = date.replace(hour=12) - timedelta(hours=tz_offset)
+        jd = swe.julday(utc_noon.year, utc_noon.month, utc_noon.day,
+                        utc_noon.hour + utc_noon.minute / 60.0, swe.GREG_CAL)
+
+        try:
+            _, tret = swe.rise_trans(jd - 0.5, swe.SUN, rsmi_rise, geopos, 0, 0, swe.FLG_SWIEPH)
+            jd_sunrise = tret[0]
+        except Exception:
+            jd_sunrise = jd - 0.25
+
+        try:
+            _, tret = swe.rise_trans(jd_sunrise, swe.SUN, rsmi_set, geopos, 0, 0, swe.FLG_SWIEPH)
+            jd_sunset = tret[0]
+        except Exception:
+            jd_sunset = jd + 0.25
+
+        try:
+            _, tret = swe.rise_trans(jd_sunset, swe.SUN, rsmi_rise, geopos, 0, 0, swe.FLG_SWIEPH)
+            jd_next_sunrise = tret[0]
+        except Exception:
+            jd_next_sunrise = jd_sunrise + 1.0
+
+        sun_lon, moon_lon = _calc_planets(jd_sunrise, flags)
+        t_idx         = _tithi_idx(sun_lon, moon_lon)
+        tithi_end_jd  = _find_tithi_end(t_idx, jd_sunrise, jd_next_sunrise, flags)
+
+        def _entry(idx: int) -> Dict:
+            return {
+                "number": (idx % 15) + 1,
+                "name":   TITHIS[idx],
+                "paksha": TITHI_PAKSHA[idx],
+            }
+
+        if tithi_end_jd is None:
+            tithis = [_entry(t_idx)]
+        else:
+            end_str = _jd_to_local_time(tithi_end_jd, tz_offset)
+            t2_idx  = (t_idx + 1) % 30
+            tithis  = [
+                {**_entry(t_idx),  "upto": end_str},
+                {**_entry(t2_idx), "from": end_str},
+            ]
+
+        py_wd  = date.weekday()
+        sun_wd = (py_wd + 1) % 7  # 0 = Sunday
+
+        result.append({
+            "date":    date_str,
+            "day":     day,
+            "weekday": sun_wd,
+            "tithis":  tithis,
+        })
+
+    return result
