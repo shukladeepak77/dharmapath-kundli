@@ -363,6 +363,7 @@
 
 .cal-amavasya .cal-tithi2 { border-top-color: rgba(255,255,255,0.15); }
 
+
 @media (max-width: 700px) {
   .cal-tithi-sub { display: none; }
   .cal-day       { min-height: 56px; padding: 6px 4px; }
