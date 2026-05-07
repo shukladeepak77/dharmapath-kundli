@@ -195,6 +195,43 @@
   .pan-sunrise-row  { flex-direction: column; gap: 6px; }
 }
 
+/* ── Tithi Calendar top form ─────────────────────────────────────────────── */
+
+.cal-top-form {
+  margin-bottom: 18px;
+}
+
+.cal-form-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.cal-label-month  { flex: 0 0 140px; }
+.cal-label-year   { flex: 0 0 100px; }
+.cal-label-loc    { flex: 1 1 260px; }
+.cal-label-submit { flex: 0 0 auto; display: flex; flex-direction: column; }
+
+.cal-submit-spacer { display: block; height: 20px; }
+
+.cal-coords-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+@media (max-width: 780px) {
+  .cal-form-row      { flex-direction: column; align-items: stretch; }
+  .cal-label-month,
+  .cal-label-year,
+  .cal-label-loc,
+  .cal-label-submit  { flex: none; }
+  .cal-submit-spacer { display: none; }
+  .cal-coords-row    { grid-template-columns: repeat(2, 1fr); }
+}
+
 /* ── Tithi Calendar ──────────────────────────────────────────────────────── */
 
 .cal-section {

@@ -24,7 +24,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/style.css?v=16" />
-  <link rel="stylesheet" href="/static/panchang.css?v=7" />
+  <link rel="stylesheet" href="/static/panchang.css?v=8" />
 </head>
 <body>
   <div class="page">
@@ -44,6 +44,7 @@
         <nav class="hero-nav">
           <a href="/" class="hero-nav-link">Kundli</a>
           <a href="/panchang" class="hero-nav-link active">Panchang</a>
+          <a href="/tithi-calendar" class="hero-nav-link">Calendar</a>
         </nav>
       </div>
     </header>
@@ -103,30 +104,8 @@
         </div>
       </section>
     </main>
-
-    <!-- Tithi Calendar -->
-    <section class="cal-section">
-      <div class="card cal-form-card">
-        <h2>Tithi Calendar</h2>
-        <p class="cal-intro">See all Tithis for any month at a glance. Search a location above first, then pick a month.</p>
-        <form id="calForm">
-          <div class="grid-2">
-            <label>Month
-              <select id="cal_month" name="month"></select>
-            </label>
-            <label>Year
-              <input type="number" id="cal_year" name="year" min="1900" max="2100" />
-            </label>
-          </div>
-          <div class="actions">
-            <button type="submit" class="primary">Show Tithi Calendar</button>
-          </div>
-        </form>
-      </div>
-      <div id="cal_results"></div>
-    </section>
   </div>
 
-  <script src="/static/panchang.js?v=6"></script>
+  <script src="/static/panchang.js?v=7"></script>
 </body>
 </html>

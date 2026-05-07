@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tithi Calendar | AstroJyotisha</title>
+  <meta name="description" content="Monthly Tithi calendar showing Shukla and Krishna Paksha tithis for any month and location. Free Vedic lunar calendar." />
+  <link rel="canonical" href="https://www.astrojyotisha.com/tithi-calendar" />
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1ZXKTLWFZF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-1ZXKTLWFZF');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css?v=16" />
+  <link rel="stylesheet" href="/static/panchang.css?v=8" />
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div>
+        <p class="eyebrow"><span class="brand-name">Dharma Path USA Foundation</span></p>
+        <h1>Tithi Calendar</h1>
+        <p class="hero-tag">Lunar Month at a Glance</p>
+        <p class="hero-tag">Shukla &amp; Krishna Paksha</p>
+      </div>
+      <div class="hero-oneliner">
+        <p>Tithi &nbsp;·&nbsp; Paksha &nbsp;·&nbsp; Purnima &nbsp;·&nbsp; Amavasya</p>
+        <p class="hero-oneliner-sub">Vedic Lunar Calendar</p>
+      </div>
+      <div class="hero-right">
+        <img src="/static/AstroJyotishalogo.png?v=1" alt="AstroJyotisha Logo" class="hero-logo" />
+        <nav class="hero-nav">
+          <a href="/" class="hero-nav-link">Kundli</a>
+          <a href="/panchang" class="hero-nav-link">Panchang</a>
+          <a href="/tithi-calendar" class="hero-nav-link active">Calendar</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Compact full-width form -->
+    <div class="card cal-top-form">
+      <form id="calForm">
+        <div class="cal-form-row">
+          <label class="cal-label-month">Month
+            <select id="cal_month" name="month"></select>
+          </label>
+          <label class="cal-label-year">Year
+            <input type="number" id="cal_year" name="year" min="1900" max="2100" />
+          </label>
+          <label class="cal-label-loc">Location
+            <div class="search-row">
+              <input name="location" id="cal_location" placeholder="Enter location and press Search" />
+              <button type="button" id="cal_searchLocation">Search</button>
+            </div>
+          </label>
+          <div class="cal-label-submit">
+            <span class="cal-submit-spacer">&#8203;</span>
+            <button type="submit" class="primary">Show Calendar</button>
+          </div>
+        </div>
+
+        <div id="cal_locationResults" class="location-results"></div>
+
+        <div class="cal-coords-row">
+          <label>Latitude
+            <input name="latitude" id="cal_latitude" placeholder="e.g. 28.6139" required />
+          </label>
+          <label>Longitude
+            <input name="longitude" id="cal_longitude" placeholder="e.g. 77.2090" required />
+          </label>
+          <label>Timezone Offset
+            <input name="timezone" id="cal_timezone" placeholder="e.g. 5.5" required />
+          </label>
+          <label>Selected Place
+            <input name="place" id="cal_place" placeholder="Auto-filled after search" />
+          </label>
+        </div>
+      </form>
+    </div>
+
+    <!-- Calendar renders here — immediately below the form -->
+    <div id="cal_results">
+      <div class="card" style="padding:36px;text-align:center">
+        <div style="font-size:36px;margin-bottom:12px">ॐ</div>
+        <h2 style="font-family:'Cinzel',serif;font-size:18px;color:var(--brand);margin:0 0 10px">Tithi Calendar</h2>
+        <div style="width:48px;height:2px;background:var(--brand);margin:0 auto 16px"></div>
+        <p style="color:var(--muted);font-size:14px;max-width:420px;margin:0 auto 6px">
+          Search a location, pick a month and click <strong>Show Calendar</strong>
+          to see all Tithis — Shukla Paksha, Krishna Paksha, Purnima and Amavasya.
+        </p>
+        <p style="color:var(--muted);font-size:12px;margin:0">Ancient Wisdom · Modern Guidance</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/tithi_calendar.js?v=2"></script>
+</body>
+</html>
