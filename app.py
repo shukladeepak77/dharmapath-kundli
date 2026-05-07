@@ -9,6 +9,7 @@ from chart_generator import generate_kundli_chart
 from pdf_report import build_kundli_pdf
 from panchang_engine import calculate_panchang, calculate_month_panchang
 from muhurat_engine import find_muhurat, EVENT_RULES
+from milan_engine import calculate_milan
 
 import httpx
 from fastapi import FastAPI, HTTPException, Request
@@ -399,6 +400,74 @@ class MonthPanchangRequest(BaseModel):
         if not (1900 <= v <= 2100):
             raise ValueError("Year must be between 1900 and 2100")
         return v
+
+
+class MilanRequest(BaseModel):
+    boy_name: str = ""
+    boy_date: str
+    boy_time: str
+    boy_tz: float
+    girl_name: str = ""
+    girl_date: str
+    girl_time: str
+    girl_tz: float
+
+    @field_validator("boy_date", "girl_date")
+    @classmethod
+    def val_milan_date(cls, v):
+        try:
+            datetime.strptime(v, "%Y-%m-%d")
+        except ValueError:
+            raise ValueError("Invalid date. Use YYYY-MM-DD")
+        return v
+
+    @field_validator("boy_time", "girl_time")
+    @classmethod
+    def val_milan_time(cls, v):
+        try:
+            datetime.strptime(v, "%H:%M")
+        except ValueError:
+            raise ValueError("Invalid time. Use HH:MM")
+        return v
+
+    @field_validator("boy_tz", "girl_tz")
+    @classmethod
+    def val_milan_tz(cls, v):
+        if not (-14 <= v <= 14):
+            raise ValueError("Timezone offset must be between -14 and 14")
+        return v
+
+    @field_validator("boy_name", "girl_name")
+    @classmethod
+    def val_milan_name(cls, v):
+        if len(v) > 100:
+            raise ValueError("Name is too long")
+        return v
+
+
+@app.get("/kundli-milan", response_class=HTMLResponse)
+async def milan_page(request: Request):
+    return templates.TemplateResponse(request, "milan.html", {})
+
+
+@app.post("/api/kundli-milan")
+@limiter.limit("10/minute")
+async def milan_api(request: Request, payload: MilanRequest):
+    try:
+        result = calculate_milan(
+            boy_date=payload.boy_date,
+            boy_time=payload.boy_time,
+            boy_tz=payload.boy_tz,
+            boy_name=payload.boy_name,
+            girl_date=payload.girl_date,
+            girl_time=payload.girl_time,
+            girl_tz=payload.girl_tz,
+            girl_name=payload.girl_name,
+        )
+        return result
+    except Exception as exc:
+        logger.exception("Error in milan_api")
+        raise HTTPException(status_code=400, detail=str(exc))
 
 
 @app.post("/api/panchang-month")
