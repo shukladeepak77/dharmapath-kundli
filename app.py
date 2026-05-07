@@ -416,9 +416,13 @@ class MilanRequest(BaseModel):
     @classmethod
     def val_milan_date(cls, v):
         try:
-            datetime.strptime(v, "%Y-%m-%d")
+            parsed = datetime.strptime(v, "%Y-%m-%d")
         except ValueError:
             raise ValueError("Invalid date. Use YYYY-MM-DD")
+        if parsed.date() > datetime.today().date():
+            raise ValueError("Birth date cannot be in the future")
+        if parsed.year < 1900:
+            raise ValueError("Birth date must be after 1900")
         return v
 
     @field_validator("boy_time", "girl_time")
@@ -447,7 +451,8 @@ class MilanRequest(BaseModel):
 
 @app.get("/kundli-milan", response_class=HTMLResponse)
 async def milan_page(request: Request):
-    return templates.TemplateResponse(request, "milan.html", {})
+    return templates.TemplateResponse(request, "milan.html",
+                                      {"today": datetime.today().strftime("%Y-%m-%d")})
 
 
 @app.post("/api/kundli-milan")

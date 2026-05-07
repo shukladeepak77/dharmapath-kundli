@@ -113,7 +113,7 @@ function renderMilan(data) {
         <span class="milan-koota-score">${k.score}</span>
         <span class="milan-koota-max"> / ${k.max}</span>
       </div>
-      <div class="milan-koota-values">♂ ${esc(k.p1_value)}<br>♀ ${esc(k.p2_value)}</div>
+      <div class="milan-koota-values">Boy: ${esc(k.p1_value)}<br>Girl: ${esc(k.p2_value)}</div>
       <div class="milan-koota-detail">${esc(k.detail)}</div>
     </div>`).join("");
 

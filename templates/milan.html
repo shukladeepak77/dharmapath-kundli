@@ -59,10 +59,10 @@
             </label>
             <div class="grid-2">
               <label>Date of Birth
-                <input type="date" id="b_date" required />
+                <input type="date" id="b_date" min="1900-01-01" max="{{ today }}" required />
               </label>
               <label>Time of Birth
-                <input type="time" id="b_time" required />
+                <input type="time" id="b_time" value="12:00" required />
               </label>
             </div>
             <label>Birth Location
@@ -101,10 +101,10 @@
             </label>
             <div class="grid-2">
               <label>Date of Birth
-                <input type="date" id="g_date" required />
+                <input type="date" id="g_date" min="1900-01-01" max="{{ today }}" required />
               </label>
               <label>Time of Birth
-                <input type="time" id="g_time" required />
+                <input type="time" id="g_time" value="12:00" required />
               </label>
             </div>
             <label>Birth Location
