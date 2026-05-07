@@ -1,0 +1,170 @@
+/* ── Panchang page styles ─────────────────────────────────────────────────── */
+
+.hero-nav {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.hero-nav-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fed7aa;
+  text-decoration: none;
+  padding: 5px 14px;
+  border: 1px solid rgba(251,191,36,0.35);
+  border-radius: 999px;
+  transition: background 0.18s, color 0.18s;
+}
+
+.hero-nav-link:hover,
+.hero-nav-link.active {
+  background: rgba(251,191,36,0.18);
+  color: #fef3c7;
+  border-color: rgba(251,191,36,0.6);
+}
+
+/* Sunrise row */
+.pan-sunrise-row {
+  display: flex;
+  gap: 28px;
+  font-size: 14px;
+  color: var(--muted);
+  margin: 4px 0 20px;
+}
+
+.pan-sunrise-row strong { color: var(--text); }
+
+/* Section titles */
+.pan-section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--brand);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin: 28px 0 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* Pancha Anga grid */
+.pan-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.pan-element {
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: center;
+}
+
+.pan-element-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--brand);
+  margin-bottom: 6px;
+}
+
+.pan-element-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.pan-element-sub {
+  font-size: 12px;
+  color: var(--muted);
+  min-height: 18px;
+}
+
+/* Timing cards */
+.pan-timing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.pan-timing {
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid transparent;
+}
+
+.pan-timing.good {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.pan-timing.bad {
+  background: #fff1f2;
+  border-color: #fecdd3;
+}
+
+.pan-timing-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.pan-timing-desc {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.pan-timing-time {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--brand);
+}
+
+.time-range { white-space: nowrap; }
+
+/* Badges */
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.badge-excellent { background: #d1fae5; color: #065f46; }
+.badge-good      { background: #dcfce7; color: #166534; }
+.badge-neutral   { background: #fef3c7; color: #92400e; }
+.badge-bad       { background: #ffe4e6; color: #9f1239; }
+
+/* Choghadiya table row colours */
+.cho-row-excellent td, .cho-row-good td { background: #f0fdf4; }
+.cho-row-neutral td  { background: #fffbeb; }
+.cho-row-bad td      { background: #fff1f2; }
+
+.cho-meaning {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.cho-table { margin-top: 8px; }
+
+/* Responsive */
+@media (max-width: 980px) {
+  .pan-grid         { grid-template-columns: repeat(3, 1fr); }
+  .pan-timing-grid  { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .pan-grid         { grid-template-columns: repeat(2, 1fr); }
+  .pan-sunrise-row  { flex-direction: column; gap: 6px; }
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Panchang &amp; Muhurat | AstroJyotisha</title>
+  <meta name="description" content="Free daily Indian Panchang — Tithi, Nakshatra, Yoga, Karana, Vara, Rahu Kaal, Choghadiya and Abhijit Muhurat for any date and location." />
+  <link rel="canonical" href="https://www.astrojyotisha.com/panchang" />
+  <meta property="og:title" content="Daily Panchang & Muhurat — AstroJyotisha" />
+  <meta property="og:description" content="Free Tithi, Nakshatra, Rahu Kaal, Choghadiya and Abhijit Muhurat for any date and location." />
+  <meta property="og:url" content="https://www.astrojyotisha.com/panchang" />
+  <meta property="og:image" content="https://www.astrojyotisha.com/static/AstroJyotishalogo.png" />
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1ZXKTLWFZF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-1ZXKTLWFZF');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css?v=16" />
+  <link rel="stylesheet" href="/static/panchang.css?v=4" />
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div>
+        <p class="eyebrow"><span class="brand-name">Dharma Path USA Foundation</span></p>
+        <h1>Daily Panchang</h1>
+        <p class="hero-tag">Auspicious Timings</p>
+        <p class="hero-tag">Sacred Calendar</p>
+      </div>
+      <div class="hero-oneliner">
+        <p>Tithi &nbsp;·&nbsp; Nakshatra &nbsp;·&nbsp; Yoga &nbsp;·&nbsp; Karana &nbsp;·&nbsp; Vara</p>
+        <p class="hero-oneliner-sub">Rahu Kaal &nbsp;·&nbsp; Choghadiya &nbsp;·&nbsp; Muhurat</p>
+      </div>
+      <div class="hero-right">
+        <img src="/static/AstroJyotishalogo.png?v=1" alt="AstroJyotisha Logo" class="hero-logo" />
+        <nav class="hero-nav">
+          <a href="/" class="hero-nav-link">Kundli</a>
+          <a href="/panchang" class="hero-nav-link active">Panchang</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="card form-card">
+        <h2>Select Date &amp; Location</h2>
+        <form id="panchangForm">
+          <label>Date
+            <input type="date" name="date" id="pan_date" min="1900-01-01" required />
+          </label>
+
+          <label>Location
+            <div class="search-row">
+              <input name="location" id="pan_location" placeholder="Enter location and press Search" />
+              <button type="button" id="pan_searchLocation">Search</button>
+            </div>
+          </label>
+
+          <div id="pan_locationResults" class="location-results"></div>
+
+          <div class="grid-3">
+            <label>Latitude
+              <input name="latitude" id="pan_latitude" placeholder="e.g. 28.6139" required />
+            </label>
+            <label>Longitude
+              <input name="longitude" id="pan_longitude" placeholder="e.g. 77.2090" required />
+            </label>
+            <label>Timezone Offset
+              <input name="timezone" id="pan_timezone" placeholder="e.g. 5.5" required />
+            </label>
+          </div>
+
+          <label>Selected Place
+            <input name="place" id="pan_place" placeholder="Auto-filled after location search" />
+          </label>
+
+          <div class="actions">
+            <button type="submit" class="primary">Show Panchang</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="results" id="pan_results">
+        <div class="card summary-card" id="pan_summary">
+          <div class="welcome-state">
+            <div class="welcome-om">ॐ</div>
+            <h2 class="welcome-title">Daily Panchang</h2>
+            <div class="welcome-divider"></div>
+            <p class="welcome-text">
+              Select a date and location, then click <strong>Show Panchang</strong>
+              to see the five sacred elements, auspicious timings, Rahu Kaal
+              and the Choghadiya table for the day.
+            </p>
+            <p class="welcome-sub">Ancient Wisdom · Modern Guidance</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/panchang.js?v=2"></script>
+</body>
+</html>

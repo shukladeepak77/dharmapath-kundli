@@ -7,6 +7,7 @@ from zoneinfo import ZoneInfo
 from interpretation_engine import generate_interpretation_report
 from chart_generator import generate_kundli_chart
 from pdf_report import build_kundli_pdf
+from panchang_engine import calculate_panchang
 
 import httpx
 from fastapi import FastAPI, HTTPException, Request
@@ -244,3 +245,69 @@ async def generate_file(request: Request, payload: KundliRequest, background_tas
     except Exception as exc:
         logger.exception("Error in generate_file")
         raise HTTPException(status_code=400, detail="Failed to generate PDF. Please check all fields and try again.")
+
+
+# ── Panchang ─────────────────────────────────────────────────────────────────
+
+class PanchangRequest(BaseModel):
+    date: str
+    latitude: float
+    longitude: float
+    timezone_offset_hours: float
+    place: str = ""
+
+    @field_validator("latitude")
+    @classmethod
+    def val_lat(cls, v):
+        if not (-90 <= v <= 90):
+            raise ValueError("Latitude must be between -90 and 90")
+        return v
+
+    @field_validator("longitude")
+    @classmethod
+    def val_lng(cls, v):
+        if not (-180 <= v <= 180):
+            raise ValueError("Longitude must be between -180 and 180")
+        return v
+
+    @field_validator("timezone_offset_hours")
+    @classmethod
+    def val_tz(cls, v):
+        if not (-14 <= v <= 14):
+            raise ValueError("Timezone offset must be between -14 and 14")
+        return v
+
+    @field_validator("date")
+    @classmethod
+    def val_date(cls, v):
+        try:
+            datetime.strptime(v, "%Y-%m-%d")
+        except ValueError:
+            raise ValueError("Invalid date. Use YYYY-MM-DD")
+        return v
+
+
+@app.get("/panchang", response_class=HTMLResponse)
+async def panchang_page(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "panchang.html",
+        {"today": datetime.today().strftime("%Y-%m-%d")},
+    )
+
+
+@app.post("/api/panchang")
+@limiter.limit("30/minute")
+async def panchang_api(request: Request, payload: PanchangRequest):
+    try:
+        result = calculate_panchang(
+            date_str=payload.date,
+            lat=payload.latitude,
+            lng=payload.longitude,
+            tz_offset=payload.timezone_offset_hours,
+            place=payload.place,
+        )
+        return result
+    except Exception as exc:
+        logger.exception("Error in panchang_api")
+        raise HTTPException(status_code=400, detail=str(exc))
