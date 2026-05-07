@@ -41,12 +41,12 @@ VARNA_RANK = {"Brahmin": 4, "Kshatriya": 3, "Vaishya": 2, "Shudra": 1}
 RASHI_VASHYA = {
     0: "Chatushpad", 1: "Chatushpad", 2: "Manav",    3: "Jalachar",
     4: "Vanchar",    5: "Manav",      6: "Manav",    7: "Keeta",
-    8: "Manav",      9: "Jalachar",  10: "Manav",   11: "Jalachar",
+    8: "Chatushpad", 9: "Jalachar",  10: "Manav",   11: "Jalachar",
 }
-# (controller, controlled) → True means controller gets 2 pts when girl controls boy
 _VASHYA_CONTROLS = {
     ("Manav", "Chatushpad"), ("Manav", "Vanchar"),
     ("Chatushpad", "Jalachar"), ("Vanchar", "Jalachar"),
+    ("Jalachar", "Keeta"),
 }
 
 # Gana by Nakshatra index
@@ -115,12 +115,12 @@ NAK_NADI = [
 NAK_YONI = [
     "Horse",    # 0  Ashwini
     "Elephant", # 1  Bharani
-    "Goat",     # 2  Krittika
+    "Sheep",    # 2  Krittika
     "Serpent",  # 3  Rohini
     "Serpent",  # 4  Mrigashira
     "Dog",      # 5  Ardra
     "Cat",      # 6  Punarvasu
-    "Goat",     # 7  Pushya
+    "Sheep",    # 7  Pushya
     "Cat",      # 8  Ashlesha
     "Rat",      # 9  Magha
     "Rat",      # 10 Purva Phalguni
@@ -129,8 +129,8 @@ NAK_YONI = [
     "Tiger",    # 13 Chitra
     "Buffalo",  # 14 Swati
     "Tiger",    # 15 Vishakha
-    "Deer",     # 16 Anuradha
-    "Deer",     # 17 Jyeshtha
+    "Hare",     # 16 Anuradha
+    "Hare",     # 17 Jyeshtha
     "Dog",      # 18 Mula
     "Monkey",   # 19 Purva Ashadha
     "Mongoose", # 20 Uttara Ashadha
@@ -145,11 +145,15 @@ NAK_YONI = [
 YONI_ENEMIES = {
     frozenset(["Horse",    "Buffalo"]),
     frozenset(["Elephant", "Lion"]),
-    frozenset(["Goat",     "Monkey"]),
-    frozenset(["Dog",      "Deer"]),
+    frozenset(["Sheep",    "Monkey"]),
+    frozenset(["Dog",      "Hare"]),
     frozenset(["Cat",      "Rat"]),
     frozenset(["Cow",      "Tiger"]),
     frozenset(["Serpent",  "Mongoose"]),
+}
+
+YONI_FRIENDLY = {
+    frozenset(["Sheep", "Hare"]),
 }
 
 # Rashi lord
@@ -265,9 +269,11 @@ def _tara(boy: Dict, girl: Dict) -> Dict:
     bn = boy["nak_idx"] + 1
 
     def _tnum(src: int, tgt: int) -> int:
-        raw = ((tgt - src) % 27) + 1
+        raw = (tgt - src) % 27
+        if raw == 0:
+            return 9  # same nakshatra → Ati-mitra
         t = raw % 9
-        return t if t != 0 else 9
+        return t if t != 0 else 8  # non-zero multiple of 9 → Mitra
 
     gb_t = _tnum(gn, bn)   # boy's Nakshatra counted from girl → Tara for boy
     bg_t = _tnum(bn, gn)   # girl's Nakshatra counted from boy → Tara for girl
@@ -279,7 +285,7 @@ def _tara(boy: Dict, girl: Dict) -> Dict:
         score, quality = 3, "good"
         detail = "Both Tara counts are auspicious"
     elif gb_ok or bg_ok:
-        score, quality = 1, "neutral"
+        score, quality = 1.5, "neutral"
         detail = "One Tara count is inauspicious — partial compatibility"
     else:
         score, quality = 0, "bad"
@@ -300,6 +306,8 @@ def _yoni(boy: Dict, girl: Dict) -> Dict:
         score, quality, detail = 4, "good", "Same Yoni — excellent physical compatibility"
     elif frozenset([by_, gy]) in YONI_ENEMIES:
         score, quality, detail = 0, "bad", "Enemy Yoni — physical incompatibility"
+    elif frozenset([by_, gy]) in YONI_FRIENDLY:
+        score, quality, detail = 3, "neutral", "Friendly Yoni — good physical compatibility"
     else:
         score, quality, detail = 2, "neutral", "Neutral Yoni — average compatibility"
     return {
@@ -327,12 +335,14 @@ def _graha_maitri(boy: Dict, girl: Dict) -> Dict:
             score, quality, detail = 3, "neutral", "Both neutral — average mental compatibility"
         elif pair in [("F", "E"), ("E", "F")]:
             score, quality, detail = 1, "neutral", "Friend + Enemy — mixed compatibility"
+        elif pair in [("N", "E"), ("E", "N")]:
+            score, quality, detail = 0.5, "bad", "Neutral + Enemy lords — some mental friction"
         else:
             score, quality, detail = 0, "bad", "Enemy lords — mental friction likely"
     return {
         "name": "Graha Maitri", "max": 5, "score": score,
-        "p1_value": f"{RASHIS[boy['rashi_idx']]} (Lord: {bl})",
-        "p2_value": f"{RASHIS[girl['rashi_idx']]} (Lord: {gl})",
+        "p1_value": f"{RASHIS[boy['rashi_idx']]} / {RASHI_HINDI[boy['rashi_idx']]} (Lord: {bl})",
+        "p2_value": f"{RASHIS[girl['rashi_idx']]} / {RASHI_HINDI[girl['rashi_idx']]} (Lord: {gl})",
         "quality": quality, "detail": detail,
     }
 
@@ -343,7 +353,7 @@ def _gana(boy: Dict, girl: Dict) -> Dict:
     if bg == gg:
         score, quality, detail = 6, "good", f"Both {bg} Gana — excellent temperament match"
     elif {bg, gg} == {"Deva", "Manav"}:
-        score, quality, detail = 5, "good", "Deva + Manav — compatible natures"
+        score, quality, detail = 6, "good", "Deva + Manav — compatible natures"
     elif {bg, gg} == {"Manav", "Rakshasa"}:
         score, quality, detail = 1, "bad", "Manav + Rakshasa — Gana Dosha present"
     else:
@@ -369,7 +379,8 @@ def _bhakoot(boy: Dict, girl: Dict) -> Dict:
               if dosha else "No Bhakoot Dosha — good family compatibility")
     return {
         "name": "Bhakoot", "max": 7, "score": score,
-        "p1_value": RASHIS[boy["rashi_idx"]], "p2_value": RASHIS[girl["rashi_idx"]],
+        "p1_value": f"{RASHIS[boy['rashi_idx']]} / {RASHI_HINDI[boy['rashi_idx']]}",
+        "p2_value": f"{RASHIS[girl['rashi_idx']]} / {RASHI_HINDI[girl['rashi_idx']]}",
         "quality": quality, "detail": detail,
         "dosha": dosha,
     }
@@ -412,6 +423,7 @@ def calculate_milan(
     ]
 
     total = sum(k["score"] for k in kootas)
+    total = int(total) if total == int(total) else total
     max_score = 36
 
     doshas = [k["name"] for k in kootas if k.get("dosha")]
