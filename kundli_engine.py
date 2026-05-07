@@ -258,35 +258,51 @@ class KundliEngine:
 
         return d9
 
-    def calculate_vimshottari(self, moon: PlanetPosition) -> List[DashaPeriod]:
+    def calculate_vimshottari(self, moon: PlanetPosition) -> List[Dict]:
         nak_len = 360.0 / 27.0
         moon_position_inside_nak = moon.longitude % nak_len
-        fraction_completed = moon_position_inside_nak / nak_len
-        fraction_remaining = 1.0 - fraction_completed
+        fraction_remaining = 1.0 - (moon_position_inside_nak / nak_len)
 
         start_lord = NAKSHATRA_LORDS[moon.nakshatra_index]
         sequence_lords = [lord for lord, _years in VIMSHOTTARI_SEQUENCE]
         start_index = sequence_lords.index(start_lord)
 
-        periods: List[DashaPeriod] = []
+        periods: List[Dict] = []
         current_start = self.local_dt
 
         for i in range(9):
             lord, full_years = VIMSHOTTARI_SEQUENCE[(start_index + i) % 9]
             years = full_years * fraction_remaining if i == 0 else full_years
             current_end = current_start + timedelta(days=years * 365.2425)
-            periods.append(
-                DashaPeriod(
-                    lord=lord,
-                    start=current_start.strftime("%Y-%m-%d"),
-                    end=current_end.strftime("%Y-%m-%d"),
-                    years=round(years, 4),
-                )
-            )
+            periods.append({
+                "lord":        lord,
+                "start":       current_start.strftime("%Y-%m-%d"),
+                "end":         current_end.strftime("%Y-%m-%d"),
+                "years":       round(years, 4),
+                "antardashas": self._calculate_antardashas(lord, years, current_start),
+            })
             current_start = current_end
             fraction_remaining = 1.0
 
         return periods
+
+    def _calculate_antardashas(self, maha_lord: str, maha_years: float,
+                               maha_start: datetime) -> List[Dict]:
+        seq = [lord for lord, _ in VIMSHOTTARI_SEQUENCE]
+        start_idx = seq.index(maha_lord)
+        result, cur = [], maha_start
+        for i in range(9):
+            lord, full_y = VIMSHOTTARI_SEQUENCE[(start_idx + i) % 9]
+            ad_years = (maha_years * full_y) / 120.0
+            end = cur + timedelta(days=ad_years * 365.2425)
+            result.append({
+                "lord":  lord,
+                "start": cur.strftime("%Y-%m-%d"),
+                "end":   end.strftime("%Y-%m-%d"),
+                "years": round(ad_years, 4),
+            })
+            cur = end
+        return result
 
     def check_mangal_dosha(self, d1: Dict[str, PlanetPosition]) -> Dict:
         dosha_houses = {1, 2, 4, 7, 8, 12}

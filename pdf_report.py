@@ -514,13 +514,72 @@ def _dasha_page(c, page_num: int, result: dict):
     c.restoreState()
     y -= 18
 
-    c.setFillColor(C_MUTED)
-    c.setFont("Helvetica-Oblique", 7.5)
-    c.drawString(
-        LM, y,
-        "✱  Sub-period (Antardasha) and Pratyantardasha calculations available on request.",
+    # ── Antardasha table for current/next Mahadasha ──────────────────────────
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    active_maha = next(
+        (d for d in dashas if d.get("start", "") <= today_str < d.get("end", "")),
+        None,
     )
-    y -= 40
+    if active_maha is None and dashas:
+        active_maha = dashas[0]
+
+    if active_maha and active_maha.get("antardashas"):
+        y -= 10
+        y = _section_bar(
+            c, y,
+            f"Antardasha — {active_maha['lord']} Mahadasha  "
+            f"({active_maha['start']} → {active_maha['end']})",
+        )
+
+        ad_cols: list[tuple[str, float]] = [
+            ("ANTARDASHA LORD", LM + 22),
+            ("START DATE",      LM + 175),
+            ("END DATE",        LM + 295),
+            ("DURATION",        LM + 410),
+        ]
+        y = _table_header(c, y, ad_cols)
+
+        ad_row_h = 20
+        for j, ad in enumerate(active_maha["antardashas"]):
+            is_now = ad.get("start", "") <= today_str < ad.get("end", "")
+            bg = colors.HexColor("#fefce8") if is_now else (C_ROW_STRIPE if j % 2 == 0 else C_WHITE)
+            lord_ad = ad["lord"]
+            dot_col = DASHA_COLORS.get(lord_ad, C_TEXT)
+
+            c.saveState()
+            c.setFillColor(bg)
+            c.rect(LM, y - ad_row_h + 4, PW - LM - RM, ad_row_h, fill=1, stroke=0)
+            if is_now:
+                c.setStrokeColor(C_AMBER)
+                c.setLineWidth(0.6)
+                c.rect(LM, y - ad_row_h + 4, PW - LM - RM, ad_row_h, fill=0, stroke=1)
+            c.setStrokeColor(C_RULE)
+            c.setLineWidth(0.3)
+            c.line(LM, y - ad_row_h + 4, PW - RM, y - ad_row_h + 4)
+
+            c.setFillColor(dot_col)
+            c.circle(LM + 10, y - 6, 4, fill=1, stroke=0)
+            c.setFont("Helvetica-Bold", 9)
+            c.drawString(LM + 22, y - 3, f"{active_maha['lord']} / {lord_ad}")
+            if is_now:
+                c.setFillColor(C_SAFFRON)
+                c.setFont("Helvetica-Bold", 7)
+                c.drawString(LM + 22, y - 13, "▶ Active Now")
+
+            c.setFillColor(C_TEXT)
+            c.setFont("Helvetica", 9)
+            c.drawString(LM + 175, y - 6, ad["start"])
+            c.drawString(LM + 295, y - 6, ad["end"])
+            c.drawString(LM + 410, y - 6, f"{ad['years']} yrs")
+            c.restoreState()
+            y -= ad_row_h
+
+        c.saveState()
+        c.setStrokeColor(C_MAROON)
+        c.setLineWidth(0.6)
+        c.line(LM, y, PW - RM, y)
+        c.restoreState()
+        y -= 14
 
     # Next-page notice box
     box_w = PW - LM - RM

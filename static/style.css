@@ -701,6 +701,54 @@ button:disabled {
   text-decoration-color: rgba(251,191,36,0.4);
 }
 
+/* ── Vimshottari Dasha ──────────────────────────────────────────────────────── */
+.dasha-maha { cursor: pointer; }
+.dasha-maha:hover td { background: #fff7ed !important; }
+.dasha-maha-active td { background: linear-gradient(135deg,#fff7ed,#ffedd5) !important; }
+
+.dasha-badge {
+  display: inline-block;
+  background: #ea580c;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 999px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.dasha-badge-now {
+  background: #b45309;
+  font-size: 9px;
+  padding: 1px 6px;
+}
+
+.dasha-toggle {
+  font-size: 10px;
+  color: var(--muted);
+  margin-left: 6px;
+  user-select: none;
+}
+
+.dasha-ad-cell { padding: 0 !important; }
+
+.dasha-ad-table {
+  font-size: 12.5px;
+  border-top: 2px solid var(--line);
+  border-radius: 0 0 16px 16px;
+  margin: 0;
+}
+
+.dasha-ad-table thead th {
+  font-size: 11px;
+  background: #fef3c7 !important;
+  color: #92400e;
+  border-radius: 0 !important;
+}
+
+.dasha-ad-now td { background: #fefce8 !important; }
+
 /* ── Vedic Indicators ───────────────────────────────────────────────────────── */
 #indicators:empty { display: none; }
 

@@ -178,23 +178,77 @@ function renderPositions(result) {
 }
 
 function renderDashas(result) {
+  const today  = new Date().toISOString().slice(0, 10);
+  const dashas = result.vimshottari_mahadasha;
+
+  const tbody = dashas.map((d, idx) => {
+    const color = PLANET_COLORS[d.lord.slice(0, 2)] || "#78716c";
+    const dot   = `<span class="planet-dot" style="background:${color}"></span>`;
+    const isActive = today >= d.start && today < d.end;
+    const badge = isActive ? `<span class="dasha-badge">Active</span>` : "";
+
+    const adRows = (d.antardashas || []).map(ad => {
+      const ac    = PLANET_COLORS[ad.lord.slice(0, 2)] || "#78716c";
+      const adDot = `<span class="planet-dot" style="background:${ac}"></span>`;
+      const isNow = today >= ad.start && today < ad.end;
+      return `<tr class="${isNow ? "dasha-ad-now" : ""}">
+        <td style="padding-left:28px">
+          <strong>${adDot}${esc(d.lord)} / ${esc(ad.lord)}</strong>
+          ${isNow ? '<span class="dasha-badge dasha-badge-now">Now</span>' : ""}
+        </td>
+        <td>${esc(ad.start)}</td>
+        <td>${esc(ad.end)}</td>
+        <td>${ad.years}</td>
+      </tr>`;
+    }).join("");
+
+    return `
+      <tr class="dasha-maha${isActive ? " dasha-maha-active" : ""}" data-idx="${idx}">
+        <td>
+          <strong>${dot}${esc(d.lord)}</strong>${badge}
+          <span class="dasha-toggle">▶</span>
+        </td>
+        <td>${esc(d.start)}</td><td>${esc(d.end)}</td><td>${d.years}</td>
+      </tr>
+      <tr class="dasha-ad-wrap" id="dad-${idx}" style="display:none">
+        <td colspan="4" class="dasha-ad-cell">
+          <table class="table dasha-ad-table">
+            <thead><tr><th>Antardasha</th><th>Start</th><th>End</th><th>Years</th></tr></thead>
+            <tbody>${adRows}</tbody>
+          </table>
+        </td>
+      </tr>`;
+  }).join("");
+
   $("dashas").innerHTML = `
     <table class="table">
-      <thead><tr><th>Lord</th><th>Start</th><th>End</th><th>Years</th></tr></thead>
-      <tbody>
-        ${result.vimshottari_mahadasha.map(d => {
-          const color = PLANET_COLORS[d.lord.slice(0,2)] || "#78716c";
-          const dot = `<span class="planet-dot" style="background:${color}"></span>`;
-          return `<tr>
-            <td><strong>${dot}${esc(d.lord)}</strong></td>
-            <td>${esc(d.start)}</td>
-            <td>${esc(d.end)}</td>
-            <td>${d.years}</td>
-          </tr>`;
-        }).join("")}
-      </tbody>
-    </table>
-  `;
+      <thead><tr><th>Mahadasha Lord</th><th>Start</th><th>End</th><th>Years</th></tr></thead>
+      <tbody>${tbody}</tbody>
+    </table>`;
+
+  // Auto-expand current Mahadasha
+  const activeIdx = dashas.findIndex(d => today >= d.start && today < d.end);
+  if (activeIdx >= 0) _openAD(activeIdx);
+
+  // Click to toggle Antardasha rows
+  document.querySelectorAll(".dasha-maha").forEach(row => {
+    row.addEventListener("click", () => {
+      const idx  = row.dataset.idx;
+      const wrap = $(`dad-${idx}`);
+      const tog  = row.querySelector(".dasha-toggle");
+      if (!wrap) return;
+      const open = wrap.style.display === "none";
+      wrap.style.display = open ? "" : "none";
+      if (tog) tog.textContent = open ? "▼" : "▶";
+    });
+  });
+}
+
+function _openAD(idx) {
+  const wrap = $(`dad-${idx}`);
+  const tog  = document.querySelector(`.dasha-maha[data-idx="${idx}"] .dasha-toggle`);
+  if (wrap) wrap.style.display = "";
+  if (tog)  tog.textContent = "▼";
 }
 
 function renderIndicators(result) {
