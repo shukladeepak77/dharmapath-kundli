@@ -2,8 +2,11 @@
 
 .hero-nav {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
   margin-top: 10px;
+  width: 100%;
 }
 
 .hero-nav-link {
@@ -11,10 +14,17 @@
   font-weight: 600;
   color: rgba(255,255,255,0.85);
   text-decoration: none;
-  padding: 5px 16px;
+  padding: 5px 14px;
   border: 1.5px solid rgba(255,255,255,0.45);
   border-radius: 999px;
   transition: background 0.18s, color 0.18s, border-color 0.18s;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .hero-nav { gap: 6px; }
+  .hero-nav-link { font-size: 11px; padding: 4px 10px; }
+  .hero-logo { width: 100px; height: 100px; }
 }
 
 .hero-nav-link:hover {
