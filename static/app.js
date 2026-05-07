@@ -44,7 +44,7 @@ function degreeText(value) {
 
 async function searchLocation() {
   const q = $("location").value.trim();
-  if (!q) return;
+  if (!q) return false;
 
   $("locationResults").innerHTML = `<div class="loc-item">Searching...</div>`;
 
@@ -56,7 +56,7 @@ async function searchLocation() {
 
   if (!data.results || data.results.length === 0) {
     $("locationResults").innerHTML = `<div class="loc-item">No locations found. Enter latitude/longitude manually.</div>`;
-    return;
+    return false;
   }
 
   const loc = data.results[0];
@@ -67,6 +67,7 @@ async function searchLocation() {
   }
   $("place").value = loc.display;
   $("locationResults").innerHTML = `<div class="loc-item"><strong>✓ ${esc(loc.display)}</strong> &nbsp;·&nbsp; Lat ${esc(loc.lat)}, Lng ${esc(loc.lng)}, TZ ${esc(loc.gmtOffset ?? "—")}</div>`;
+  return true;
 }
 
 function renderSummary(result) {
@@ -189,6 +190,17 @@ function renderAll(result) {
 
 async function generateKundli(event) {
   event.preventDefault();
+
+  // Auto-search location if lat/lng not yet filled
+  if (!$("latitude").value && $("location").value.trim()) {
+    const found = await searchLocation();
+    if (!found) {
+      $("summary").innerHTML = `<div class="loading-state">
+        <p style="color:#9a3412;font-weight:700">Location not found. Please enter a valid place or fill latitude/longitude manually.</p>
+      </div>`;
+      return;
+    }
+  }
 
   const payload = {
     birth_date: $("birth_date").value,
