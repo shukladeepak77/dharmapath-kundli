@@ -8,6 +8,7 @@ from interpretation_engine import generate_interpretation_report
 from chart_generator import generate_kundli_chart
 from pdf_report import build_kundli_pdf
 from panchang_engine import calculate_panchang, calculate_month_panchang
+from muhurat_engine import find_muhurat, EVENT_RULES
 
 import httpx
 from fastapi import FastAPI, HTTPException, Request
@@ -285,6 +286,65 @@ class PanchangRequest(BaseModel):
         except ValueError:
             raise ValueError("Invalid date. Use YYYY-MM-DD")
         return v
+
+
+@app.get("/muhurat-finder", response_class=HTMLResponse)
+async def muhurat_page(request: Request):
+    event_types = [{"key": k, "label": v["label"]} for k, v in EVENT_RULES.items()]
+    return templates.TemplateResponse(request, "muhurat.html", {"event_types": event_types})
+
+
+class MuhuratRequest(BaseModel):
+    event_type: str
+    start_date: str
+    end_date: str
+    latitude: float
+    longitude: float
+    timezone_offset_hours: float
+    place: str = ""
+
+    @field_validator("event_type")
+    @classmethod
+    def val_event(cls, v):
+        if v not in EVENT_RULES:
+            raise ValueError("Invalid event type")
+        return v
+
+    @field_validator("start_date", "end_date")
+    @classmethod
+    def val_date(cls, v):
+        try:
+            datetime.strptime(v, "%Y-%m-%d")
+        except ValueError:
+            raise ValueError("Invalid date. Use YYYY-MM-DD")
+        return v
+
+
+@app.post("/api/muhurat")
+@limiter.limit("5/minute")
+async def muhurat_api(request: Request, payload: MuhuratRequest):
+    try:
+        start = datetime.strptime(payload.start_date, "%Y-%m-%d")
+        end   = datetime.strptime(payload.end_date,   "%Y-%m-%d")
+        if end < start:
+            raise HTTPException(status_code=400, detail="End date must be after start date")
+        if (end - start).days > 120:
+            raise HTTPException(status_code=400, detail="Date range cannot exceed 4 months")
+        result = find_muhurat(
+            start_date=payload.start_date,
+            end_date=payload.end_date,
+            lat=payload.latitude,
+            lng=payload.longitude,
+            tz_offset=payload.timezone_offset_hours,
+            event_type=payload.event_type,
+            place=payload.place,
+        )
+        return result
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Error in muhurat_api")
+        raise HTTPException(status_code=400, detail=str(exc))
 
 
 @app.get("/tithi-calendar", response_class=HTMLResponse)

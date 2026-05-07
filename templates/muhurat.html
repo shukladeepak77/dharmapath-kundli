@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shubh Muhurat Finder | AstroJyotisha</title>
+  <meta name="description" content="Find auspicious Shubh Muhurat for weddings, griha pravesh, business start, travel and more. Based on Tithi, Nakshatra, Vara and Choghadiya." />
+  <link rel="canonical" href="https://www.astrojyotisha.com/muhurat-finder" />
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1ZXKTLWFZF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-1ZXKTLWFZF');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css?v=16" />
+  <link rel="stylesheet" href="/static/panchang.css?v=8" />
+  <link rel="stylesheet" href="/static/muhurat.css?v=1" />
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div>
+        <p class="eyebrow"><span class="brand-name">Dharma Path USA Foundation</span></p>
+        <h1>Shubh Muhurat</h1>
+        <p class="hero-tag">Auspicious Timing Finder</p>
+        <p class="hero-tag">Vivah · Griha Pravesh · Vyapar</p>
+      </div>
+      <div class="hero-oneliner">
+        <p>Tithi &nbsp;·&nbsp; Nakshatra &nbsp;·&nbsp; Vara &nbsp;·&nbsp; Choghadiya</p>
+        <p class="hero-oneliner-sub">Classical Jyotish — Authentic Muhurat</p>
+      </div>
+      <div class="hero-right">
+        <img src="/static/AstroJyotishalogo.png?v=1" alt="AstroJyotisha Logo" class="hero-logo" />
+        <nav class="hero-nav">
+          <a href="/" class="hero-nav-link">Kundli</a>
+          <a href="/panchang" class="hero-nav-link">Panchang</a>
+          <a href="/tithi-calendar" class="hero-nav-link">Calendar</a>
+          <a href="/muhurat-finder" class="hero-nav-link active">Muhurat</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Compact top form -->
+    <div class="card muh-top-form">
+      <form id="muhuratForm">
+        <div class="muh-form-row">
+          <label class="muh-label-event">Event Type
+            <select id="muh_event">
+              {% for e in event_types %}
+              <option value="{{ e.key }}">{{ e.label }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label class="muh-label-date">From Date
+            <input type="date" id="muh_start" name="start_date" required />
+          </label>
+          <label class="muh-label-date">To Date
+            <input type="date" id="muh_end" name="end_date" required />
+          </label>
+          <label class="muh-label-loc">Location
+            <div class="search-row">
+              <input id="muh_location" placeholder="Enter location and press Search" />
+              <button type="button" id="muh_searchLocation">Search</button>
+            </div>
+          </label>
+          <div class="muh-label-submit">
+            <span class="cal-submit-spacer">&#8203;</span>
+            <button type="submit" class="primary">Find Muhurat</button>
+          </div>
+        </div>
+
+        <div id="muh_locationResults" class="location-results"></div>
+
+        <div class="cal-coords-row">
+          <label>Latitude
+            <input id="muh_latitude" placeholder="e.g. 28.6139" required />
+          </label>
+          <label>Longitude
+            <input id="muh_longitude" placeholder="e.g. 77.2090" required />
+          </label>
+          <label>Timezone Offset
+            <input id="muh_timezone" placeholder="e.g. 5.5" required />
+          </label>
+          <label>Selected Place
+            <input id="muh_place" placeholder="Auto-filled after search" />
+          </label>
+        </div>
+      </form>
+    </div>
+
+    <!-- Results render here immediately below form -->
+    <div id="muh_results">
+      <div class="card" style="padding:36px;text-align:center">
+        <div style="font-size:36px;margin-bottom:12px">ॐ</div>
+        <h2 style="font-family:'Cinzel',serif;font-size:18px;color:var(--brand);margin:0 0 10px">Shubh Muhurat Finder</h2>
+        <div style="width:48px;height:2px;background:var(--brand);margin:0 auto 16px"></div>
+        <p style="color:var(--muted);font-size:14px;max-width:480px;margin:0 auto 6px">
+          Select an event type, date range and location, then click <strong>Find Muhurat</strong>
+          to see the most auspicious dates ranked by Tithi, Nakshatra, Vara and Choghadiya quality.
+        </p>
+        <p style="color:var(--muted);font-size:12px;margin:0">Ancient Wisdom · Modern Guidance</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/muhurat.js?v=1"></script>
+</body>
+</html>

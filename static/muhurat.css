@@ -1,0 +1,198 @@
+/* ── Muhurat page ────────────────────────────────────────────────────────── */
+
+.muh-top-form { margin-bottom: 18px; }
+
+.muh-form-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.muh-label-event  { flex: 0 0 210px; }
+.muh-label-date   { flex: 0 0 150px; }
+.muh-label-loc    { flex: 1 1 220px; }
+.muh-label-submit { flex: 0 0 auto; display: flex; flex-direction: column; }
+
+/* Results header */
+.muh-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.muh-heading {
+  font-family: 'Cinzel', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--brand);
+  margin: 0 0 4px;
+}
+
+.muh-subheading {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.muh-legend {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.muh-legend-item {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+/* Result cards */
+.muh-card {
+  margin-bottom: 14px;
+}
+
+.muh-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.muh-date {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.muh-sunrise {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* Rating badges */
+.muh-rating {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.muh-rating-excellent { background: #d1fae5; color: #065f46; }
+.muh-rating-good      { background: #fef3c7; color: #92400e; }
+.muh-rating-ok        { background: #f1f5f9; color: #475569; }
+
+/* Four factor pills */
+.muh-factors {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.muh-factor {
+  border-radius: 10px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.muh-good    { background: #f0fdf4; border-color: #bbf7d0; }
+.muh-bad     { background: #fff1f2; border-color: #fecdd3; }
+.muh-neutral { background: var(--soft); border-color: var(--line); }
+
+.muh-factor-icon {
+  font-size: 13px;
+  font-weight: 700;
+  color: inherit;
+}
+.muh-good .muh-factor-icon  { color: #16a34a; }
+.muh-bad  .muh-factor-icon  { color: #dc2626; }
+
+.muh-factor-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--muted);
+}
+
+.muh-factor-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Auspicious windows */
+.muh-windows-row,
+.muh-avoid-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.muh-windows-label,
+.muh-avoid-label {
+  font-weight: 700;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.muh-window {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 12px;
+  color: #166534;
+  font-weight: 600;
+}
+
+.muh-window-none {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.muh-avoid-time {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 12px;
+  color: #9f1239;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .muh-factors { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 700px) {
+  .muh-form-row      { flex-direction: column; align-items: stretch; }
+  .muh-label-event,
+  .muh-label-date,
+  .muh-label-loc,
+  .muh-label-submit  { flex: none; }
+  .cal-submit-spacer { display: none; }
+  .muh-factors       { grid-template-columns: repeat(2, 1fr); }
+  .muh-header        { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 480px) {
+  .muh-factors { grid-template-columns: 1fr 1fr; }
+}
