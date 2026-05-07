@@ -126,6 +126,11 @@ function renderPanchang(data) {
   $("pan_summary").innerHTML = `
     <h2>Panchang — ${esc(data.date)}${data.place ? " · " + esc(data.place) : ""}</h2>
 
+    <div class="pan-sunrise-row">
+      <span>🌅 Sunrise: <strong>${esc(data.sunrise)}</strong></span>
+      <span>🌇 Sunset: <strong>${esc(data.sunset)}</strong></span>
+    </div>
+
     <h3 class="pan-section-title">Pancha Anga — Five Sacred Elements</h3>
     <div class="pan-grid">
       ${renderTithiCell(p.tithis)}
