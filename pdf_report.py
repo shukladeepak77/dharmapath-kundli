@@ -262,6 +262,18 @@ def _cover_page(c, bd: dict, result: dict):
     bh = 200
     by = PH - band_h - 3 - 28 - bh   # bottom of box
 
+    # Note just above birth details box
+    c.setFillColor(C_MAROON)
+    c.setFont("Helvetica-Bold", 7.5)
+    c.drawCentredString(
+        PW / 2, by + bh + 19,
+        "This is a detailed Jyotish report. For a personalised interpretation summary,",
+    )
+    c.drawCentredString(
+        PW / 2, by + bh + 7,
+        "please email this report to seva@dharmpathusa.com",
+    )
+
     # Shadow
     c.setFillColor(C_RULE)
     c.roundRect(bx + 3, by - 3, bw, bh, 10, fill=1, stroke=0)
