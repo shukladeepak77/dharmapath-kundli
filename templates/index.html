@@ -115,7 +115,10 @@
 
           <div class="actions">
             <button type="submit" class="primary">Kundli Chart</button>
-	    <button type="button" id="downloadJson" class="primary">Kundli Report</button>
+            <button type="button" id="downloadJson" class="primary">Kundli Report</button>
+          </div>
+          <div id="shareArea" style="display:none;margin-top:8px">
+            <button type="button" id="shareBtn" class="secondary" style="width:100%">Copy Share Link</button>
           </div>
         </form>
 
@@ -154,11 +157,13 @@
           <h2>Vimshottari Mahadasha</h2>
           <div id="dashas"></div>
         </div>
+
+        <div class="card" id="indicators"></div>
       </section>
     </main>
   </div>
 
-  <script src="/static/app.js?v=18"></script>
+  <script src="/static/app.js?v=19"></script>
 
   <section class="seo-section">
     <div class="seo-inner">

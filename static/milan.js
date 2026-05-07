@@ -216,4 +216,77 @@ async function submitMilan(e) {
   }
 }
 
+async function downloadMilanPdf() {
+  const btn = $("milanPdfBtn");
+
+  if (!$("b_latitude").value && $("b_location").value.trim()) {
+    const found = await searchLocation("b");
+    if (!found) {
+      alert("Boy's birth location not found. Please enter a valid city name.");
+      return;
+    }
+  }
+  if (!$("g_latitude").value && $("g_location").value.trim()) {
+    const found = await searchLocation("g");
+    if (!found) {
+      alert("Girl's birth location not found. Please enter a valid city name.");
+      return;
+    }
+  }
+
+  const bTz = parseFloat($("b_timezone").value);
+  const gTz = parseFloat($("g_timezone").value);
+  if (isNaN(bTz) || !$("b_latitude").value) {
+    alert("Please enter the boy's birth location.");
+    return;
+  }
+  if (isNaN(gTz) || !$("g_latitude").value) {
+    alert("Please enter the girl's birth location.");
+    return;
+  }
+
+  const payload = {
+    boy_name:   $("b_name").value.trim(),
+    boy_date:   $("b_date").value,
+    boy_time:   $("b_time").value,
+    boy_tz:     bTz,
+    boy_place:  $("b_place").value,
+    girl_name:  $("g_name").value.trim(),
+    girl_date:  $("g_date").value,
+    girl_time:  $("g_time").value,
+    girl_tz:    gTz,
+    girl_place: $("g_place").value,
+  };
+
+  btn.textContent = "Match Report…";
+  btn.disabled = true;
+
+  try {
+    const res = await fetch("/generate-milan-file", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      alert("Failed to generate PDF. Please fill in all fields and try again.");
+      return;
+    }
+
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a");
+    a.href     = url;
+    a.download = `kundli_milan_${payload.boy_date}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } finally {
+    btn.textContent = "Match Report";
+    btn.disabled = false;
+  }
+}
+
 $("milanForm").addEventListener("submit", submitMilan);
+$("milanPdfBtn").addEventListener("click", downloadMilanPdf);

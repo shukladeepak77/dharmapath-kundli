@@ -3,6 +3,28 @@ let currentChart = "d1";
 
 document.addEventListener("DOMContentLoaded", () => {
   $("birth_time").value = "12:00";
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("bd")) {
+    $("birth_date").value = params.get("bd");
+    if (params.get("bt")) $("birth_time").value = params.get("bt");
+    $("latitude").value  = params.get("lat")   || "";
+    $("longitude").value = params.get("lng")   || "";
+    $("timezone").value  = params.get("tz")    || "";
+    const place = params.get("place") || "";
+    $("place").value    = place;
+    if (place) {
+      $("location").value = place;
+      const lat = params.get("lat"), lng = params.get("lng"), tz = params.get("tz");
+      $("locationResults").innerHTML =
+        `<div class="loc-item"><strong>✓ ${esc(place)}</strong> &nbsp;·&nbsp; Lat ${esc(lat)}, Lng ${esc(lng)}, TZ ${esc(tz ?? "—")}</div>`;
+    }
+    if (params.get("lat") && params.get("lng") && params.get("tz")) {
+      setTimeout(() => {
+        $("kundliForm").dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+      }, 120);
+    }
+  }
 });
 
 const PLANET_FULL_NAMES = {
@@ -175,12 +197,72 @@ function renderDashas(result) {
   `;
 }
 
+function renderIndicators(result) {
+  const md = result.mangal_dosha;
+  const ss = result.sade_sati;
+
+  // Mangal Dosha
+  const dosha   = md.has_dosha;
+  const dColor  = dosha ? "#b91c1c" : "#15803d";
+  const dBg     = dosha ? "#fef2f2" : "#f0fdf4";
+  const dBorder = dosha ? "#fca5a5" : "#86efac";
+  const dIcon   = dosha ? "⚠" : "✓";
+  const dTitle  = dosha ? "Mangal Dosha Present" : "No Mangal Dosha";
+  let dDesc = "";
+  if (md.from_lagna)  dDesc += `Mars in House ${md.mars_house_from_lagna} from Lagna. `;
+  if (md.from_moon)   dDesc += `Mars in House ${md.mars_house_from_moon} from Moon. `;
+  if (md.from_venus)  dDesc += `Mars in House ${md.mars_house_from_venus} from Venus.`;
+  if (!dosha) dDesc = `Mars in House ${md.mars_house_from_lagna} from Lagna — no Dosha positions.`;
+
+  // Sade Sati
+  const inSS  = ss.in_sade_sati;
+  const inD   = ss.in_dhaiyya;
+  const ssAct = inSS || inD;
+  const sColor  = inSS ? "#b91c1c" : (inD ? "#b45309" : "#15803d");
+  const sBg     = inSS ? "#fef2f2" : (inD ? "#fffbeb" : "#f0fdf4");
+  const sBorder = inSS ? "#fca5a5" : (inD ? "#fbbf24" : "#86efac");
+  const sIcon   = ssAct ? "⚠" : "✓";
+  const sTitle  = inSS ? `Sade Sati — ${esc(ss.phase)}` :
+                  (inD  ? `Dhaiyya — ${esc(ss.phase)}` : "Not in Sade Sati");
+
+  $("indicators").innerHTML = `
+    <h2>Vedic Indicators</h2>
+    <div class="indicators-grid">
+      <div class="indicator-card" style="background:${dBg};border-color:${dBorder}">
+        <div class="indicator-header">
+          <span class="indicator-icon" style="color:${dColor}">${dIcon}</span>
+          <span class="indicator-title" style="color:${dColor}">${dTitle}</span>
+        </div>
+        <p class="indicator-detail">${esc(dDesc)}</p>
+        <div class="indicator-meta">
+          H${md.mars_house_from_lagna} from Lagna &nbsp;·&nbsp;
+          H${md.mars_house_from_moon} from Moon &nbsp;·&nbsp;
+          H${md.mars_house_from_venus} from Venus
+        </div>
+      </div>
+      <div class="indicator-card" style="background:${sBg};border-color:${sBorder}">
+        <div class="indicator-header">
+          <span class="indicator-icon" style="color:${sColor}">${sIcon}</span>
+          <span class="indicator-title" style="color:${sColor}">${sTitle}</span>
+        </div>
+        <p class="indicator-detail">${esc(ss.detail)}</p>
+        <div class="indicator-meta">
+          Saturn in ${esc(ss.current_saturn_rashi)} &nbsp;·&nbsp;
+          Birth Moon in ${esc(ss.moon_birth_rashi)} &nbsp;·&nbsp;
+          As of ${esc(ss.current_date)}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function renderAll(result) {
   renderSummary(result);
   const chart = currentChart === "d1" ? result.d1_chart_visual : result.d9_chart_visual;
   renderChart(chart);
   renderPositions(result);
   renderDashas(result);
+  renderIndicators(result);
   document.querySelectorAll(".results .card, .results .chart-tabs").forEach(el => {
     el.classList.remove("fade-in");
     void el.offsetWidth;
@@ -236,6 +318,15 @@ async function generateKundli(event) {
 
   lastResult = await res.json();
   renderAll(lastResult);
+
+  // Update URL so it can be copied and shared
+  const shareParams = new URLSearchParams({
+    bd: payload.birth_date, bt: payload.birth_time,
+    lat: payload.latitude,  lng: payload.longitude,
+    tz:  payload.timezone_offset_hours, place: payload.place,
+  });
+  history.replaceState(null, "", `?${shareParams.toString()}`);
+  $("shareArea").style.display = "block";
 }
 
 async function downloadJson() {
@@ -281,6 +372,15 @@ async function downloadJson() {
 
 $("kundliForm").addEventListener("submit", generateKundli);
 $("downloadJson").addEventListener("click", downloadJson);
+
+$("shareBtn").addEventListener("click", () => {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const btn = $("shareBtn");
+    const prev = btn.textContent;
+    btn.textContent = "Copied!";
+    setTimeout(() => { btn.textContent = prev; }, 1800);
+  });
+});
 
 document.querySelectorAll(".tab").forEach(btn => {
   btn.addEventListener("click", () => {

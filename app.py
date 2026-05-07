@@ -10,6 +10,7 @@ from pdf_report import build_kundli_pdf
 from panchang_engine import calculate_panchang, calculate_month_panchang
 from muhurat_engine import find_muhurat, EVENT_RULES
 from milan_engine import calculate_milan
+from milan_pdf import build_milan_pdf
 
 import httpx
 from fastapi import FastAPI, HTTPException, Request
@@ -473,6 +474,63 @@ async def milan_api(request: Request, payload: MilanRequest):
     except Exception as exc:
         logger.exception("Error in milan_api")
         raise HTTPException(status_code=400, detail=str(exc))
+
+
+class MilanFileRequest(MilanRequest):
+    boy_place:  str = ""
+    girl_place: str = ""
+
+    @field_validator("boy_place", "girl_place")
+    @classmethod
+    def val_milan_place(cls, v):
+        if len(v) > 200:
+            raise ValueError("Place name is too long")
+        return v
+
+
+@app.post("/generate-milan-file")
+@limiter.limit("5/minute")
+async def generate_milan_file(
+    request: Request, payload: MilanFileRequest, background_tasks: BackgroundTasks
+):
+    try:
+        result = calculate_milan(
+            boy_date=payload.boy_date,
+            boy_time=payload.boy_time,
+            boy_tz=payload.boy_tz,
+            boy_name=payload.boy_name,
+            girl_date=payload.girl_date,
+            girl_time=payload.girl_time,
+            girl_tz=payload.girl_tz,
+            girl_name=payload.girl_name,
+        )
+        result["boy"]["dob"]   = f"{payload.boy_date} {payload.boy_time}"
+        result["boy"]["place"] = payload.boy_place
+        result["girl"]["dob"]  = f"{payload.girl_date} {payload.girl_time}"
+        result["girl"]["place"] = payload.girl_place
+
+        with tempfile.NamedTemporaryFile(
+            suffix=".pdf", delete=False, dir="/tmp",
+            prefix=f"milan_{payload.boy_date}_"
+        ) as f:
+            path = f.name
+
+        build_milan_pdf(result, path)
+        filename = f"kundli_milan_{payload.boy_date}.pdf"
+        background_tasks.add_task(os.unlink, path)
+
+        return FileResponse(
+            path,
+            media_type="application/pdf",
+            filename=filename,
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        )
+    except Exception as exc:
+        logger.exception("Error in generate_milan_file")
+        raise HTTPException(
+            status_code=400,
+            detail="Failed to generate PDF. Please check all fields and try again.",
+        )
 
 
 @app.post("/api/panchang-month")

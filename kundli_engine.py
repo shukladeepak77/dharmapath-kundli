@@ -185,6 +185,8 @@ class KundliEngine:
             "d1_chart_visual": chart_data_d1,
             "d9_chart_visual": chart_data_d9,
             "vimshottari_mahadasha": dataclass_dict(dashas),
+            "mangal_dosha": self.check_mangal_dosha(d1),
+            "sade_sati": self.check_sade_sati(d1),
         }
 
     def planet_longitude_sidereal(self, planet_id: int) -> Tuple[float, float]:
@@ -285,6 +287,71 @@ class KundliEngine:
             fraction_remaining = 1.0
 
         return periods
+
+    def check_mangal_dosha(self, d1: Dict[str, PlanetPosition]) -> Dict:
+        dosha_houses = {1, 2, 4, 7, 8, 12}
+        mars_house  = d1["Mars"].house
+        mars_rashi  = d1["Mars"].rashi_index
+        moon_rashi  = d1["Moon"].rashi_index
+        venus_rashi = d1["Venus"].rashi_index
+        mars_from_moon  = ((mars_rashi - moon_rashi)  % 12) + 1
+        mars_from_venus = ((mars_rashi - venus_rashi) % 12) + 1
+        from_lagna = mars_house in dosha_houses
+        from_moon  = mars_from_moon in dosha_houses
+        from_venus = mars_from_venus in dosha_houses
+        return {
+            "has_dosha":             from_lagna or from_moon or from_venus,
+            "mars_house_from_lagna": mars_house,
+            "mars_house_from_moon":  mars_from_moon,
+            "mars_house_from_venus": mars_from_venus,
+            "from_lagna": from_lagna,
+            "from_moon":  from_moon,
+            "from_venus": from_venus,
+        }
+
+    def check_sade_sati(self, d1: Dict[str, PlanetPosition]) -> Dict:
+        today = datetime.utcnow()
+        jd_today = swe.julday(today.year, today.month, today.day,
+                              decimal_hour(today), swe.GREG_CAL)
+        flags = swe.FLG_SWIEPH | swe.FLG_SIDEREAL
+        try:
+            saturn_result, _ = swe.calc_ut(jd_today, swe.SATURN, flags)
+        except Exception:
+            saturn_result, _ = swe.calc_ut(jd_today, swe.SATURN,
+                                           swe.FLG_MOSEPH | swe.FLG_SIDEREAL)
+        saturn_lon       = normalize_deg(saturn_result[0])
+        saturn_rashi_idx = int(saturn_lon / 30)
+        moon_rashi_idx   = d1["Moon"].rashi_index
+        diff = (saturn_rashi_idx - moon_rashi_idx) % 12
+        in_sade_sati = diff in {11, 0, 1}
+        in_dhaiyya   = diff in {3, 7}
+        if diff == 11:
+            phase  = "Rising Phase"
+            detail = "Saturn is in the 12th from your birth Moon — Sade Sati is beginning"
+        elif diff == 0:
+            phase  = "Peak Phase"
+            detail = "Saturn is transiting your birth Moon Rashi — peak period of Sade Sati"
+        elif diff == 1:
+            phase  = "Setting Phase"
+            detail = "Saturn is in the 2nd from your birth Moon — Sade Sati is ending"
+        elif diff == 3:
+            phase  = "Dhaiyya – 4th"
+            detail = "Saturn in 4th from Moon — Kantaka Shani (2.5-year sub-transit)"
+        elif diff == 7:
+            phase  = "Dhaiyya – 8th"
+            detail = "Saturn in 8th from Moon — Ashtama Shani (2.5-year sub-transit)"
+        else:
+            phase  = None
+            detail = "Saturn is not in a Sade Sati or Dhaiyya transit relative to your birth Moon"
+        return {
+            "in_sade_sati":         in_sade_sati,
+            "in_dhaiyya":           in_dhaiyya,
+            "phase":                phase,
+            "detail":               detail,
+            "current_saturn_rashi": RASHIS[saturn_rashi_idx],
+            "moon_birth_rashi":     d1["Moon"].rashi,
+            "current_date":         today.strftime("%Y-%m-%d"),
+        }
 
     def build_chart_data(self, positions: Dict[str, PlanetPosition]) -> Dict:
         lagna_rashi_index = positions["Lagna"].rashi_index
