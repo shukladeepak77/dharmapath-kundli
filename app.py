@@ -287,6 +287,11 @@ class PanchangRequest(BaseModel):
         return v
 
 
+@app.get("/tithi-calendar", response_class=HTMLResponse)
+async def tithi_calendar_page(request: Request):
+    return templates.TemplateResponse(request, "tithi_calendar.html", {})
+
+
 @app.get("/panchang", response_class=HTMLResponse)
 async def panchang_page(request: Request):
     return templates.TemplateResponse(
