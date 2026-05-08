@@ -405,6 +405,20 @@ async function generateKundli(event) {
 
 async function downloadJson() {
   const btn = $("downloadJson");
+
+  if (!$("birth_date").value || !$("birth_time").value || !$("location").value.trim()) {
+    alert("Please fill in date of birth, time of birth, and location before downloading.");
+    return;
+  }
+
+  if (!$("latitude").value && $("location").value.trim()) {
+    const found = await searchLocation();
+    if (!found) {
+      alert("Location not found. Please select a location from the dropdown suggestions.");
+      return;
+    }
+  }
+
   const payload = {
     birth_date: $("birth_date").value,
     birth_time: $("birth_time").value,
