@@ -20,7 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/style.css?v=16" />
   <link rel="stylesheet" href="/static/panchang.css?v=9" />
-  <link rel="stylesheet" href="/static/muhurat.css?v=1" />
+  <link rel="stylesheet" href="/static/muhurat.css?v=2" />
 </head>
 <body>
   <div class="page">
@@ -30,10 +30,6 @@
         <h1>Shubh Muhurat</h1>
         <p class="hero-tag">Auspicious Timing Finder</p>
         <p class="hero-tag">Vivah · Griha Pravesh · Vyapar</p>
-      </div>
-      <div class="hero-oneliner">
-        <p>Tithi &nbsp;·&nbsp; Nakshatra &nbsp;·&nbsp; Vara &nbsp;·&nbsp; Choghadiya</p>
-        <p class="hero-oneliner-sub">Classical Jyotish — Authentic Muhurat</p>
       </div>
       <div class="hero-right">
         <img src="/static/AstroJyotishalogo.png?v=1" alt="AstroJyotisha Logo" class="hero-logo" />
@@ -66,10 +62,7 @@
             <input type="date" id="muh_end" name="end_date" required />
           </label>
           <label class="muh-label-loc">Location
-            <div class="search-row">
-              <input id="muh_location" placeholder="Enter location and press Search" />
-              <button type="button" id="muh_searchLocation">Search</button>
-            </div>
+            <input id="muh_location" placeholder="Enter city, e.g. New Delhi, India" autocomplete="off" />
           </label>
           <div class="muh-label-submit">
             <span class="cal-submit-spacer">&#8203;</span>
@@ -79,20 +72,10 @@
 
         <div id="muh_locationResults" class="location-results"></div>
 
-        <div class="cal-coords-row">
-          <label>Latitude
-            <input id="muh_latitude" placeholder="e.g. 28.6139" required />
-          </label>
-          <label>Longitude
-            <input id="muh_longitude" placeholder="e.g. 77.2090" required />
-          </label>
-          <label>Timezone Offset
-            <input id="muh_timezone" placeholder="e.g. 5.5" required />
-          </label>
-          <label>Selected Place
-            <input id="muh_place" placeholder="Auto-filled after search" />
-          </label>
-        </div>
+        <input type="hidden" id="muh_latitude" />
+        <input type="hidden" id="muh_longitude" />
+        <input type="hidden" id="muh_timezone" />
+        <input type="hidden" id="muh_place" />
       </form>
     </div>
 
@@ -111,6 +94,6 @@
     </div>
   </div>
 
-  <script src="/static/muhurat.js?v=1"></script>
+  <script src="/static/muhurat.js?v=4"></script>
 </body>
 </html>

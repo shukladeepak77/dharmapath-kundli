@@ -141,13 +141,37 @@ function renderMilan(data) {
       <div class="milan-no-dosha">✓ No major Doshas — Nadi, Bhakoot and Gana are all compatible.</div>`;
   }
 
+  const disclaimer = `
+    <div class="card muh-disclaimer">
+      <h3 class="muh-disclaimer-title">About This Compatibility Report</h3>
+      <p class="muh-disclaimer-body">
+        This report is based on the classical <strong>Ashtakoota Guna Milan</strong> system of
+        Vedic Jyotisha, which evaluates compatibility across eight dimensions — Varna, Vashya,
+        Tara, Yoni, Graha Maitri, Gana, Bhakoot and Nadi — using the Moon's Nakshatra and Rashi
+        at the time of birth. The maximum score in this system is <strong>36 points</strong>.
+      </p>
+      <div class="muh-disclaimer-notice">
+        <strong>Important:</strong> The Ashtakoota system is one of several tools used in Vedic
+        Jyotisha for assessing compatibility. It does <em>not</em> assess the full birth chart,
+        planetary periods (Dasha), Mangal Dosha in both charts, or other factors that a qualified
+        Jyotishi would consider. A high score does not guarantee a successful marriage, and a
+        lower score does not preclude one. We strongly encourage consulting a qualified Jyotishi
+        for a complete and personalised assessment before making any matrimonial decisions.
+        All results are provided for <strong>informational and spiritual exploration purposes
+        only</strong> and do not constitute professional astrological or matrimonial advice.
+        AstroJyotisha and Dharma Path USA Foundation make no representations or warranties
+        regarding the accuracy or fitness of these results for any particular purpose.
+      </div>
+      <p class="muh-disclaimer-seva">Offered as seva by Dharma Path USA Foundation &nbsp;·&nbsp; <a href="mailto:seva@dharmpathusa.com">seva@dharmpathusa.com</a></p>
+    </div>`;
+
   $("milan_results").innerHTML = `
     <div class="card">
       ${resultHeader}
       ${moonRow}
       ${kootaGrid}
       ${doshaSection}
-    </div>`;
+    </div>` + disclaimer;
 
   $("milan_results").scrollIntoView({ behavior: "smooth", block: "start" });
 }

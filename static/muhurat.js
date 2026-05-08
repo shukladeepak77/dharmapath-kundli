@@ -15,31 +15,40 @@ document.addEventListener("DOMContentLoaded", () => {
   $("muh_end").value = end.toISOString().split("T")[0];
 });
 
-async function searchLocation() {
-  const q = $("muh_location").value.trim();
-  if (!q) return;
-  $("muh_locationResults").innerHTML = `<div class="loc-item">Searching...</div>`;
+let _locTimer = null;
 
-  let data = {};
-  try {
-    const res = await fetch(`/api/location-search?q=${encodeURIComponent(q)}`);
-    data = await res.json();
-  } catch (_) {}
-
-  if (!data.results || data.results.length === 0) {
-    $("muh_locationResults").innerHTML = `<div class="loc-item">No locations found. Enter manually.</div>`;
-    return;
-  }
-  const loc = data.results[0];
+function _fillLocation(loc) {
   $("muh_latitude").value  = loc.lat;
   $("muh_longitude").value = loc.lng;
-  if (loc.gmtOffset !== null && loc.gmtOffset !== undefined) {
-    $("muh_timezone").value = loc.gmtOffset;
-  }
-  $("muh_place").value = loc.display;
-  $("muh_locationResults").innerHTML =
-    `<div class="loc-item"><strong>✓ ${esc(loc.display)}</strong> &nbsp;·&nbsp; Lat ${esc(loc.lat)}, Lng ${esc(loc.lng)}, TZ ${esc(loc.gmtOffset ?? "—")}</div>`;
+  $("muh_timezone").value  = loc.gmtOffset;
+  $("muh_place").value     = loc.display;
+  $("muh_location").value  = loc.display;
+  $("muh_locationResults").innerHTML = "";
 }
+
+$("muh_location").addEventListener("input", () => {
+  $("muh_latitude").value = "";
+  clearTimeout(_locTimer);
+  const q = $("muh_location").value.trim();
+  if (q.length < 2) { $("muh_locationResults").innerHTML = ""; return; }
+  _locTimer = setTimeout(async () => {
+    $("muh_locationResults").innerHTML = `<div class="loc-item">Searching…</div>`;
+    try {
+      const res  = await fetch(`/api/location-search?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      if (!data.results || !data.results.length) {
+        $("muh_locationResults").innerHTML = `<div class="loc-item">No results found.</div>`;
+        return;
+      }
+      $("muh_locationResults").innerHTML = data.results
+        .map(l => `<div class="loc-item" style="cursor:pointer">${esc(l.display)}</div>`)
+        .join("");
+      document.querySelectorAll("#muh_locationResults .loc-item").forEach((el, i) => {
+        el.addEventListener("click", () => _fillLocation(data.results[i]));
+      });
+    } catch (_) { $("muh_locationResults").innerHTML = ""; }
+  }, 400);
+});
 
 function qualityIcon(q) {
   if (q === "good" || q === "excellent" || q === "auspicious") return "✓";
@@ -135,30 +144,68 @@ function renderResults(data) {
       </div>`;
   }).join("");
 
-  $("muh_results").innerHTML = header + cards;
+  const disclaimer = `
+    <div class="card muh-disclaimer">
+      <h3 class="muh-disclaimer-title">How These Dates Are Calculated</h3>
+      <p class="muh-disclaimer-body">
+        Muhurat suggestions are based on classical Vedic Jyotisha principles — evaluating
+        <strong>Tithi</strong> (lunar day), <strong>Nakshatra</strong> (lunar mansion),
+        <strong>Vara</strong> (weekday) and <strong>Yoga</strong> for each date, weighted
+        according to traditional rules for the selected event type. Auspicious time windows
+        within the day are drawn from <strong>Choghadiya</strong>, filtered to exclude
+        Rahu Kaal, Yamgandam and Gulikai.
+      </p>
+      <div class="muh-disclaimer-notice">
+        <strong>Important:</strong> These suggestions are based on general classical Jyotisha
+        rules and do <em>not</em> account for individual birth charts, regional traditions,
+        family customs, or the specific planetary periods (Dasha) of the individuals involved.
+        For important life events, we strongly encourage consulting a qualified Jyotishi who
+        can assess the full horoscope. All results are provided for
+        <strong>informational and spiritual exploration purposes only</strong> and do not
+        constitute professional astrological advice. AstroJyotisha and Dharma Path USA
+        Foundation make no representations or warranties regarding the accuracy or fitness
+        of these suggestions for any particular purpose.
+      </div>
+      <p class="muh-disclaimer-seva">Offered as seva by Dharma Path USA Foundation &nbsp;·&nbsp; <a href="mailto:seva@dharmpathusa.com">seva@dharmpathusa.com</a></p>
+    </div>`;
+
+  $("muh_results").innerHTML = header + cards + disclaimer;
   $("muh_results").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 async function submitMuhurat(e) {
   e.preventDefault();
 
-  const lat = parseFloat($("muh_latitude").value);
-  const lng = parseFloat($("muh_longitude").value);
-  const tz  = parseFloat($("muh_timezone").value);
-
-  if (!lat || !lng || isNaN(tz)) {
-    $("muh_results").innerHTML = `<div class="card" style="padding:20px;text-align:center;color:#9a3412">
-      Please search for a location first.</div>`;
-    return;
+  // Auto-resolve location if user typed but didn't pick from suggestions
+  if (!$("muh_latitude").value) {
+    const q = $("muh_location").value.trim();
+    if (!q) {
+      $("muh_results").innerHTML = `<div class="card" style="padding:20px;text-align:center;color:#9a3412">Please enter a location.</div>`;
+      return;
+    }
+    $("muh_results").innerHTML = `<div class="card" style="padding:36px;text-align:center">
+      <div class="spinner"></div><p class="loading-text">Finding location…</p></div>`;
+    try {
+      const res  = await fetch(`/api/location-search?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      if (!data.results || !data.results.length) {
+        $("muh_results").innerHTML = `<div class="card" style="padding:20px;text-align:center;color:#9a3412">Location not found. Please try a different name.</div>`;
+        return;
+      }
+      _fillLocation(data.results[0]);
+    } catch (_) {
+      $("muh_results").innerHTML = `<div class="card" style="padding:20px;text-align:center;color:#9a3412">Location lookup failed. Please try again.</div>`;
+      return;
+    }
   }
 
   const payload = {
     event_type:            $("muh_event").value,
     start_date:            $("muh_start").value,
     end_date:              $("muh_end").value,
-    latitude:              lat,
-    longitude:             lng,
-    timezone_offset_hours: tz,
+    latitude:              parseFloat($("muh_latitude").value),
+    longitude:             parseFloat($("muh_longitude").value),
+    timezone_offset_hours: parseFloat($("muh_timezone").value),
     place:                 $("muh_place").value,
   };
 
@@ -185,5 +232,4 @@ async function submitMuhurat(e) {
   }
 }
 
-$("muh_searchLocation").addEventListener("click", searchLocation);
 $("muhuratForm").addEventListener("submit", submitMuhurat);

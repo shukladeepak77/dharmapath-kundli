@@ -41,12 +41,15 @@ VARNA_RANK = {"Brahmin": 4, "Kshatriya": 3, "Vaishya": 2, "Shudra": 1}
 RASHI_VASHYA = {
     0: "Chatushpad", 1: "Chatushpad", 2: "Manav",    3: "Jalachar",
     4: "Vanchar",    5: "Manav",      6: "Manav",    7: "Keeta",
-    8: "Chatushpad", 9: "Jalachar",  10: "Manav",   11: "Jalachar",
+    8: "Manav",      9: "Jalachar",  10: "Manav",   11: "Jalachar",
 }
 _VASHYA_CONTROLS = {
     ("Manav", "Chatushpad"), ("Manav", "Vanchar"),
     ("Chatushpad", "Jalachar"), ("Vanchar", "Jalachar"),
     ("Jalachar", "Keeta"),
+}
+_VASHYA_HALF = {
+    frozenset(["Jalachar", "Manav"]),
 }
 
 # Gana by Nakshatra index
@@ -249,12 +252,14 @@ def _vashya(boy: Dict, girl: Dict) -> Dict:
         score, detail = 2, "Same Vashya group — mutual attraction"
     elif frozenset([bv, gv]) in {frozenset(p) for p in _VASHYA_CONTROLS}:
         score, detail = 1, "Compatible Vashya groups — partial harmony"
+    elif frozenset([bv, gv]) in _VASHYA_HALF:
+        score, detail = 0.5, "Partial Vashya affinity — some compatibility"
     else:
         score, detail = 0, "Incompatible Vashya groups"
     return {
         "name": "Vashya", "max": 2, "score": score,
         "p1_value": bv, "p2_value": gv,
-        "quality": "good" if score == 2 else ("neutral" if score == 1 else "bad"),
+        "quality": "good" if score == 2 else ("neutral" if score >= 1 else "bad"),
         "detail": detail,
     }
 
@@ -265,18 +270,15 @@ _TARA_INAUSPICIOUS = {1, 3, 5, 7}  # Janma, Vipat, Pratyari, Vadha
 
 
 def _tara(boy: Dict, girl: Dict) -> Dict:
-    gn = girl["nak_idx"] + 1  # 1-indexed
-    bn = boy["nak_idx"] + 1
+    bn = boy["nak_idx"] + 1   # 1-indexed (1–27)
+    gn = girl["nak_idx"] + 1
 
-    def _tnum(src: int, tgt: int) -> int:
-        raw = (tgt - src) % 27
-        if raw == 0:
-            return 9  # same nakshatra → Ati-mitra
-        t = raw % 9
-        return t if t != 0 else 8  # non-zero multiple of 9 → Mitra
+    def _tnum(n: int) -> int:
+        t = n % 9
+        return t if t != 0 else 9
 
-    gb_t = _tnum(gn, bn)   # boy's Nakshatra counted from girl → Tara for boy
-    bg_t = _tnum(bn, gn)   # girl's Nakshatra counted from boy → Tara for girl
+    gb_t = _tnum(bn)   # boy's absolute Tara position
+    bg_t = _tnum(gn)   # girl's absolute Tara position
 
     gb_ok = gb_t not in _TARA_INAUSPICIOUS
     bg_ok = bg_t not in _TARA_INAUSPICIOUS

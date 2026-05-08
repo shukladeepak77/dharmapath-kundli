@@ -22,32 +22,40 @@ document.addEventListener("DOMContentLoaded", () => {
   $("cal_year").value = now.getFullYear();
 });
 
-async function searchLocation() {
-  const q = $("cal_location").value.trim();
-  if (!q) return;
-  $("cal_locationResults").innerHTML = `<div class="loc-item">Searching...</div>`;
+let _locTimer = null;
 
-  let data = {};
-  try {
-    const res = await fetch(`/api/location-search?q=${encodeURIComponent(q)}`);
-    data = await res.json();
-  } catch (_) {}
-
-  if (!data.results || data.results.length === 0) {
-    $("cal_locationResults").innerHTML = `<div class="loc-item">No locations found. Enter manually.</div>`;
-    return;
-  }
-
-  const loc = data.results[0];
+function _fillLocation(loc) {
   $("cal_latitude").value  = loc.lat;
   $("cal_longitude").value = loc.lng;
-  if (loc.gmtOffset !== null && loc.gmtOffset !== undefined) {
-    $("cal_timezone").value = loc.gmtOffset;
-  }
-  $("cal_place").value = loc.display;
-  $("cal_locationResults").innerHTML =
-    `<div class="loc-item"><strong>✓ ${esc(loc.display)}</strong> &nbsp;·&nbsp; Lat ${esc(loc.lat)}, Lng ${esc(loc.lng)}, TZ ${esc(loc.gmtOffset ?? "—")}</div>`;
+  $("cal_timezone").value  = loc.gmtOffset;
+  $("cal_place").value     = loc.display;
+  $("cal_location").value  = loc.display;
+  $("cal_locationResults").innerHTML = "";
 }
+
+$("cal_location").addEventListener("input", () => {
+  $("cal_latitude").value = "";
+  clearTimeout(_locTimer);
+  const q = $("cal_location").value.trim();
+  if (q.length < 2) { $("cal_locationResults").innerHTML = ""; return; }
+  _locTimer = setTimeout(async () => {
+    $("cal_locationResults").innerHTML = `<div class="loc-item">Searching…</div>`;
+    try {
+      const res  = await fetch(`/api/location-search?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      if (!data.results || !data.results.length) {
+        $("cal_locationResults").innerHTML = `<div class="loc-item">No results found.</div>`;
+        return;
+      }
+      $("cal_locationResults").innerHTML = data.results
+        .map(l => `<div class="loc-item" style="cursor:pointer">${esc(l.display)}</div>`)
+        .join("");
+      document.querySelectorAll("#cal_locationResults .loc-item").forEach((el, i) => {
+        el.addEventListener("click", () => _fillLocation(data.results[i]));
+      });
+    } catch (_) { $("cal_locationResults").innerHTML = ""; }
+  }, 400);
+});
 
 function calDayClass(tithis) {
   const t = tithis[0];
@@ -96,22 +104,34 @@ function renderCalendar(data) {
 async function submitCalendar(e) {
   e.preventDefault();
 
-  const lat = parseFloat($("cal_latitude").value);
-  const lng = parseFloat($("cal_longitude").value);
-  const tz  = parseFloat($("cal_timezone").value);
-
-  if (!lat || !lng || isNaN(tz)) {
-    $("cal_results").innerHTML = `<div class="card" style="padding:20px;text-align:center;color:#9a3412">
-      Please search for a location first.</div>`;
-    return;
+  if (!$("cal_latitude").value) {
+    const q = $("cal_location").value.trim();
+    if (!q) {
+      $("cal_results").innerHTML = `<div class="card" style="padding:20px;text-align:center;color:#9a3412">Please enter a location.</div>`;
+      return;
+    }
+    $("cal_results").innerHTML = `<div class="card" style="padding:28px;text-align:center">
+      <div class="spinner"></div><p class="loading-text">Finding location…</p></div>`;
+    try {
+      const res  = await fetch(`/api/location-search?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      if (!data.results || !data.results.length) {
+        $("cal_results").innerHTML = `<div class="card" style="padding:20px;text-align:center;color:#9a3412">Location not found. Please try a different name.</div>`;
+        return;
+      }
+      _fillLocation(data.results[0]);
+    } catch (_) {
+      $("cal_results").innerHTML = `<div class="card" style="padding:20px;text-align:center;color:#9a3412">Location lookup failed. Please try again.</div>`;
+      return;
+    }
   }
 
   const payload = {
     year:                  parseInt($("cal_year").value),
     month:                 parseInt($("cal_month").value),
-    latitude:              lat,
-    longitude:             lng,
-    timezone_offset_hours: tz,
+    latitude:              parseFloat($("cal_latitude").value),
+    longitude:             parseFloat($("cal_longitude").value),
+    timezone_offset_hours: parseFloat($("cal_timezone").value),
     place:                 $("cal_place").value,
   };
 
@@ -137,5 +157,4 @@ async function submitCalendar(e) {
   }
 }
 
-$("cal_searchLocation").addEventListener("click", searchLocation);
 $("calForm").addEventListener("submit", submitCalendar);

@@ -59,10 +59,7 @@
             <input type="number" id="cal_year" name="year" min="1900" max="2100" />
           </label>
           <label class="cal-label-loc">Location
-            <div class="search-row">
-              <input name="location" id="cal_location" placeholder="Enter location and press Search" />
-              <button type="button" id="cal_searchLocation">Search</button>
-            </div>
+            <input id="cal_location" placeholder="Enter city, e.g. New Delhi, India" autocomplete="off" />
           </label>
           <div class="cal-label-submit">
             <span class="cal-submit-spacer">&#8203;</span>
@@ -72,20 +69,10 @@
 
         <div id="cal_locationResults" class="location-results"></div>
 
-        <div class="cal-coords-row">
-          <label>Latitude
-            <input name="latitude" id="cal_latitude" placeholder="e.g. 28.6139" required />
-          </label>
-          <label>Longitude
-            <input name="longitude" id="cal_longitude" placeholder="e.g. 77.2090" required />
-          </label>
-          <label>Timezone Offset
-            <input name="timezone" id="cal_timezone" placeholder="e.g. 5.5" required />
-          </label>
-          <label>Selected Place
-            <input name="place" id="cal_place" placeholder="Auto-filled after search" />
-          </label>
-        </div>
+        <input type="hidden" id="cal_latitude" />
+        <input type="hidden" id="cal_longitude" />
+        <input type="hidden" id="cal_timezone" />
+        <input type="hidden" id="cal_place" />
       </form>
     </div>
 
@@ -104,6 +91,6 @@
     </div>
   </div>
 
-  <script src="/static/tithi_calendar.js?v=2"></script>
+  <script src="/static/tithi_calendar.js?v=3"></script>
 </body>
 </html>

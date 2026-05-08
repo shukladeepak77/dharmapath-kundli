@@ -317,6 +317,27 @@ function renderAll(result) {
   renderPositions(result);
   renderDashas(result);
   renderIndicators(result);
+  $("kundli-disclaimer").innerHTML = `
+    <h3 class="muh-disclaimer-title">About This Kundli Report</h3>
+    <p class="muh-disclaimer-body">
+      This Kundli is calculated using classical <strong>Vedic Jyotisha (Jyotish Shastra)</strong>
+      with the Lahiri Ayanamsha. It covers the D1 Rashi chart,
+      D9 Navamsa, planetary positions with Nakshatra and Pada, Vimshottari Mahadasha &amp;
+      Antardasha timeline, Mangal Dosha assessment and Sade Sati status.
+    </p>
+    <div class="muh-disclaimer-notice">
+      <strong>Important:</strong> This report is intended for <strong>spiritual exploration
+      and self-reflection only</strong>. Jyotisha is a complex, multi-layered science —
+      a complete reading requires the interpretation of a qualified Jyotishi who can assess
+      planetary strength, Dasha timing, divisional charts and remedial measures in the context
+      of your full life situation. The information provided here does not constitute
+      professional astrological, medical, legal or financial advice. AstroJyotisha and
+      Dharma Path USA Foundation make no representations or warranties regarding the accuracy
+      or fitness of this report for any particular purpose.
+    </div>
+    <p class="muh-disclaimer-seva">Offered freely as seva by Dharma Path USA Foundation &nbsp;·&nbsp; <a href="mailto:seva@dharmpathusa.com" style="color:var(--brand);text-decoration:none">seva@dharmpathusa.com</a></p>
+  `;
+  $("kundli-disclaimer").style.display = "block";
   document.querySelectorAll(".results .card, .results .chart-tabs").forEach(el => {
     el.classList.remove("fade-in");
     void el.offsetWidth;
@@ -380,7 +401,6 @@ async function generateKundli(event) {
     tz:  payload.timezone_offset_hours, place: payload.place,
   });
   history.replaceState(null, "", `?${shareParams.toString()}`);
-  $("shareArea").style.display = "block";
 }
 
 async function downloadJson() {
@@ -427,14 +447,6 @@ async function downloadJson() {
 $("kundliForm").addEventListener("submit", generateKundli);
 $("downloadJson").addEventListener("click", downloadJson);
 
-$("shareBtn").addEventListener("click", () => {
-  navigator.clipboard.writeText(window.location.href).then(() => {
-    const btn = $("shareBtn");
-    const prev = btn.textContent;
-    btn.textContent = "Copied!";
-    setTimeout(() => { btn.textContent = prev; }, 1800);
-  });
-});
 
 document.querySelectorAll(".tab").forEach(btn => {
   btn.addEventListener("click", () => {

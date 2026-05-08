@@ -10,32 +10,41 @@ document.addEventListener("DOMContentLoaded", () => {
   $("pan_date").value = new Date().toISOString().split("T")[0];
 });
 
-async function searchLocation() {
-  const q = $("pan_location").value.trim();
-  if (!q) return;
-  $("pan_locationResults").innerHTML = `<div class="loc-item">Searching...</div>`;
+let _locTimer = null;
 
-  let data = {};
-  try {
-    const res = await fetch(`/api/location-search?q=${encodeURIComponent(q)}`);
-    data = await res.json();
-  } catch (_) {}
-
-  if (!data.results || data.results.length === 0) {
-    $("pan_locationResults").innerHTML = `<div class="loc-item">No locations found. Enter manually.</div>`;
-    return;
-  }
-
-  const loc = data.results[0];
+function _fillLocation(loc) {
   $("pan_latitude").value  = loc.lat;
   $("pan_longitude").value = loc.lng;
-  if (loc.gmtOffset !== null && loc.gmtOffset !== undefined) {
-    $("pan_timezone").value = loc.gmtOffset;
-  }
-  $("pan_place").value = loc.display;
-  $("pan_locationResults").innerHTML =
-    `<div class="loc-item"><strong>✓ ${esc(loc.display)}</strong> &nbsp;·&nbsp; Lat ${esc(loc.lat)}, Lng ${esc(loc.lng)}, TZ ${esc(loc.gmtOffset ?? "—")}</div>`;
+  $("pan_timezone").value  = loc.gmtOffset;
+  $("pan_place").value     = loc.display;
+  $("pan_location").value  = loc.display;
+  $("pan_locationResults").innerHTML = "";
 }
+
+$("pan_location") && $("pan_location").addEventListener("input", () => {
+  $("pan_latitude").value = "";
+  clearTimeout(_locTimer);
+  const q = $("pan_location").value.trim();
+  if (q.length < 2) { $("pan_locationResults").innerHTML = ""; return; }
+  _locTimer = setTimeout(async () => {
+    $("pan_locationResults").innerHTML = `<div class="loc-item">Searching…</div>`;
+    try {
+      const res  = await fetch(`/api/location-search?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      if (!data.results || !data.results.length) {
+        $("pan_locationResults").innerHTML = `<div class="loc-item">No results found.</div>`;
+        return;
+      }
+      $("pan_locationResults").innerHTML = data.results
+        .map(l => `<div class="loc-item" style="cursor:pointer">${esc(l.display)}</div>`)
+        .join("");
+      document.querySelectorAll("#pan_locationResults .loc-item").forEach((el, i) => {
+        el.addEventListener("click", () => _fillLocation(data.results[i]));
+      });
+    } catch (_) { $("pan_locationResults").innerHTML = ""; }
+  }, 400);
+});
+
 
 function qualityBadge(q) {
   const cls = { excellent: "badge-excellent", good: "badge-good", neutral: "badge-neutral", bad: "badge-bad", inauspicious: "badge-bad", auspicious: "badge-good" };
@@ -202,6 +211,32 @@ function choTable(slots) {
 async function submitPanchang(e) {
   e.preventDefault();
 
+  // Auto-resolve location if user typed but didn't pick from suggestions
+  if (!$("pan_latitude").value) {
+    const q = $("pan_location").value.trim();
+    if (!q) {
+      $("pan_summary").innerHTML = `<div style="padding:20px;text-align:center"><p style="color:#9a3412;font-weight:700">Please enter a location.</p></div>`;
+      return;
+    }
+    $("pan_summary").innerHTML = `
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p class="loading-text">Finding location…</p>
+      </div>`;
+    try {
+      const res  = await fetch(`/api/location-search?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      if (!data.results || !data.results.length) {
+        $("pan_summary").innerHTML = `<div style="padding:20px;text-align:center"><p style="color:#9a3412;font-weight:700">Location not found. Please try a different name.</p></div>`;
+        return;
+      }
+      _fillLocation(data.results[0]);
+    } catch (_) {
+      $("pan_summary").innerHTML = `<div style="padding:20px;text-align:center"><p style="color:#9a3412">Location lookup failed. Please try again.</p></div>`;
+      return;
+    }
+  }
+
   const payload = {
     date: $("pan_date").value,
     latitude: parseFloat($("pan_latitude").value),
@@ -247,5 +282,4 @@ async function submitPanchang(e) {
   }
 }
 
-$("pan_searchLocation").addEventListener("click", searchLocation);
 $("panchangForm").addEventListener("submit", submitPanchang);

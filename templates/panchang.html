@@ -35,10 +35,6 @@
         <p class="hero-tag">Auspicious Timings</p>
         <p class="hero-tag">Sacred Calendar</p>
       </div>
-      <div class="hero-oneliner">
-        <p>Tithi &nbsp;·&nbsp; Nakshatra &nbsp;·&nbsp; Yoga &nbsp;·&nbsp; Karana &nbsp;·&nbsp; Vara</p>
-        <p class="hero-oneliner-sub">Rahu Kaal &nbsp;·&nbsp; Choghadiya &nbsp;·&nbsp; Muhurat</p>
-      </div>
       <div class="hero-right">
         <img src="/static/AstroJyotishalogo.png?v=1" alt="AstroJyotisha Logo" class="hero-logo" />
         <nav class="hero-nav">
@@ -56,34 +52,21 @@
       <section class="card form-card">
         <h2>Select Date &amp; Location</h2>
         <form id="panchangForm">
-          <label>Date
-            <input type="date" name="date" id="pan_date" min="1900-01-01" required />
-          </label>
-
-          <label>Location
-            <div class="search-row">
-              <input name="location" id="pan_location" placeholder="Enter location and press Search" />
-              <button type="button" id="pan_searchLocation">Search</button>
-            </div>
-          </label>
-
-          <div id="pan_locationResults" class="location-results"></div>
-
-          <div class="grid-3">
-            <label>Latitude
-              <input name="latitude" id="pan_latitude" placeholder="e.g. 28.6139" required />
+          <div class="grid-2">
+            <label>Date
+              <input type="date" name="date" id="pan_date" min="1900-01-01" required />
             </label>
-            <label>Longitude
-              <input name="longitude" id="pan_longitude" placeholder="e.g. 77.2090" required />
-            </label>
-            <label>Timezone Offset
-              <input name="timezone" id="pan_timezone" placeholder="e.g. 5.5" required />
+            <label>Location
+              <input id="pan_location" placeholder="Enter city, e.g. New Delhi, India" autocomplete="off" />
             </label>
           </div>
 
-          <label>Selected Place
-            <input name="place" id="pan_place" placeholder="Auto-filled after location search" />
-          </label>
+          <div id="pan_locationResults" class="location-results"></div>
+
+          <input type="hidden" id="pan_latitude" />
+          <input type="hidden" id="pan_longitude" />
+          <input type="hidden" id="pan_timezone" />
+          <input type="hidden" id="pan_place" />
 
           <div class="actions">
             <button type="submit" class="primary">Show Panchang</button>
@@ -109,6 +92,6 @@
     </main>
   </div>
 
-  <script src="/static/panchang.js?v=7"></script>
+  <script src="/static/panchang.js?v=9"></script>
 </body>
 </html>
