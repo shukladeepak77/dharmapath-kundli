@@ -7,3 +7,5 @@ pyswisseph
 reportlab
 pillow
 timezonefinder
+groq
+python-dotenv

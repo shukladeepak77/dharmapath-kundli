@@ -3,6 +3,10 @@ import os
 import tempfile
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from typing import List
+
+from dotenv import load_dotenv
+load_dotenv()
 
 from interpretation_engine import generate_interpretation_report
 from chart_generator import generate_kundli_chart
@@ -555,3 +559,100 @@ async def panchang_month_api(request: Request, payload: MonthPanchangRequest):
     except Exception as exc:
         logger.exception("Error in panchang_month_api")
         raise HTTPException(status_code=400, detail=str(exc))
+
+
+# ── Jyotish Chatbot ──────────────────────────────────────────────────────────
+
+_JYOTISH_SYSTEM = """You are Jyotishi, a knowledgeable and warm Vedic astrology assistant for AstroJyotisha (astrojyotisha.com), offered as seva by Dharma Path USA Foundation.
+
+## CRITICAL — Chart Calculation
+You CANNOT calculate planetary positions, Lagna, Nakshatras, or Dashas yourself. You do not have an astronomical engine. If you try to calculate, you will be wrong.
+
+When a user needs their personal chart read:
+- Direct them to click "📊 Calculate My Chart" in this chat window — it will compute their chart using the same Lahiri Ayanamsha engine as the site.
+- Once the chart is calculated and provided to you as "BIRTH CHART DATA" below, use ONLY those values. Never contradict or override the provided chart data.
+- If no chart data has been provided yet, do NOT guess planetary positions or Dasha periods.
+
+## CRITICAL — Birth Data Collection
+For any personal reading/prediction (Dasha, Sade Sati, Mangal Dosha, career, marriage, "next months", etc.) you need the user's birth chart. If no chart has been calculated yet:
+1. Ask for date of birth, time of birth (approximate is fine), and place of birth.
+2. Then tell them: "Please click 📊 Calculate My Chart above with these details — I'll interpret your actual chart."
+3. Do NOT attempt to compute or guess the chart yourself.
+
+For general Jyotish questions (not personal readings), answer freely without needing birth data.
+
+## What you help with
+- Kundli interpretation: Lagna, Rashis, Nakshatras, Bhavas, planetary positions, Drishti, Yogas
+- Vimshottari Dasha: Mahadasha, Antardasha — timing and interpretation
+- Kundli Milan (Ashtakoota): all 8 Kootas interpretation
+- Mangal Dosha, Sade Sati, Kaal Sarp Dosha and remedies
+- Shubh Muhurat selection principles
+- Panchang, Tithi, Nakshatra, Yoga, Karana, Vara
+- General Vedic Jyotisha concepts
+
+## Tone
+Warm, respectful, rooted in Vedic wisdom. Use Sanskrit terms naturally with brief English explanations. Be concise but thorough.
+
+## Boundaries
+- Outside Jyotisha/Dharmic topics: "I'm here to assist with Vedic Jyotisha and Dharmic guidance. For other topics, I'm unable to help."
+- No specific medical, legal, or financial predictions under any circumstances.
+- Do not add any disclaimer at the end of your responses — the disclaimer is handled separately by the system."""
+
+_GROQ_MODEL = "llama-3.3-70b-versatile"
+_MAX_HISTORY = 20  # keep last 10 pairs
+
+
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
+
+class ChatRequest(BaseModel):
+    messages: List[ChatMessage]
+    kundli_context: str = ""
+
+    @field_validator("messages")
+    @classmethod
+    def val_messages(cls, v):
+        if not v or len(v) > 50:
+            raise ValueError("messages must be 1–50 items")
+        for m in v:
+            if m.role not in ("user", "assistant"):
+                raise ValueError("role must be user or assistant")
+            if len(m.content) > 2000:
+                raise ValueError("each message must be under 2000 characters")
+        return v
+
+    @field_validator("kundli_context")
+    @classmethod
+    def val_context(cls, v):
+        if len(v) > 4000:
+            raise ValueError("kundli_context too large")
+        return v
+
+
+@app.post("/api/chat")
+@limiter.limit("20/minute")
+async def chat_api(request: Request, payload: ChatRequest):
+    api_key = os.getenv("GROQ_API_KEY", "")
+    if not api_key or api_key == "your_groq_api_key_here":
+        raise HTTPException(status_code=503, detail="Chat service not configured.")
+    try:
+        from groq import Groq
+        client = Groq(api_key=api_key)
+        system = _JYOTISH_SYSTEM
+        if payload.kundli_context:
+            system += f"\n\n---\n{payload.kundli_context}\n---\nUse the above birth chart data for all personal readings in this conversation."
+        history = payload.messages[-_MAX_HISTORY:]
+        completion = client.chat.completions.create(
+            model=_GROQ_MODEL,
+            messages=[{"role": "system", "content": system}]
+                     + [{"role": m.role, "content": m.content} for m in history],
+            max_tokens=700,
+            temperature=0.7,
+        )
+        reply = completion.choices[0].message.content
+        return {"reply": reply}
+    except Exception as exc:
+        logger.exception("Chat API error")
+        raise HTTPException(status_code=500, detail="Chat service error. Please try again.")
