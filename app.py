@@ -119,17 +119,22 @@ async def robots():
 
 @app.get("/sitemap.xml")
 async def sitemap():
-    content = (
-        '<?xml version="1.0" encoding="UTF-8"?>'
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
-        "<url>"
-        "<loc>https://www.astrojyotisha.com/</loc>"
-        "<changefreq>monthly</changefreq>"
-        "<priority>1.0</priority>"
-        "</url>"
-        "</urlset>"
-    )
-    return HTMLResponse(content=content, media_type="application/xml")
+    today = datetime.today().strftime("%Y-%m-%d")
+    urls = [
+        ("https://www.astrojyotisha.com/", "1.0", "weekly"),
+        ("https://www.astrojyotisha.com/kundli-milan", "0.9", "monthly"),
+        ("https://www.astrojyotisha.com/panchang", "0.9", "daily"),
+        ("https://www.astrojyotisha.com/muhurat-finder", "0.8", "monthly"),
+        ("https://www.astrojyotisha.com/tithi-calendar", "0.8", "monthly"),
+    ]
+    parts = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for loc, priority, freq in urls:
+        parts.append(
+            f"<url><loc>{loc}</loc><lastmod>{today}</lastmod>"
+            f"<changefreq>{freq}</changefreq><priority>{priority}</priority></url>"
+        )
+    parts.append("</urlset>")
+    return HTMLResponse(content="".join(parts), media_type="application/xml")
 
 
 @app.get("/", response_class=HTMLResponse)
